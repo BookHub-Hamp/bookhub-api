@@ -100,7 +100,8 @@ Este diagrama ilustra el esquema de la base de datos utilizada por la aplicació
 
 # Asignación de Historias de Usuario
 
-**Sprint 1:** Desarrollo del MVP - Funcionalidades Básicas  
+
+**Sprint 1:** Funcionalidades Básicas  
   *Enfocado en implementar las funcionalidades esenciales de CRUD para la gestión de categorías, libros, autores, usuarios, y el flujo inicial de compras, asegurando que el producto esté listo para un uso básico.*
 
 
