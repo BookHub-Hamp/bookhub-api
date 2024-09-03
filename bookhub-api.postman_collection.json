@@ -1,0 +1,498 @@
+{
+	"info": {
+		"_postman_id": "096b6777-07f0-4518-b290-3c7c97573955",
+		"name": "bookhub-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "6246033"
+	},
+	"item": [
+		{
+			"name": "category",
+			"item": [
+				{
+					"name": "Crear una nueva categoría",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Tecnología\",\r\n  \"description\": \"Libros relacionados con tecnología y ciencias de la computación.\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener todas las categorías",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/categories",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener una categoría por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/categories/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar una categoría existente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Tecnología Avanzada\",\r\n  \"description\": \"Descripción actualizada para libros de tecnología avanzada.\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/categories/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"categories",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar una categoría por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/categories/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"categories",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Paginación de categorías",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/categories/page?size=5&page=0&sort=name",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"categories",
+								"page"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "name"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "book",
+			"item": [
+				{
+					"name": "Crear un nuevo libro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Introducción a Java\",\r\n  \"slug\": \"introduccion-a-java\",\r\n  \"description\": \"Un libro completo sobre programación en Java.\",\r\n  \"price\": 19.99,\r\n  \"coverPath\": \"/portadas/introduccion-a-java.jpg\",\r\n  \"filePath\": \"/archivos/introduccion-a-java.pdf\",\r\n  \"category\": {\r\n    \"id\": 1  // ID de una categoría existente\r\n  },\r\n  \"author\": {\r\n    \"id\": 1  // ID de una categoría existente\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/books",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar un libro existente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Introducción a Java - Edición Actualizada\",\r\n  \"slug\": \"introduccion-a-java-edicion-actualizada\",\r\n  \"description\": \"Una edición actualizada del libro completo sobre programación en Java.\",\r\n  \"price\": 24.99,\r\n  \"coverPath\": \"/portadas/introduccion-a-java-actualizada.jpg\",\r\n  \"filePath\": \"/archivos/introduccion-a-java-actualizado.pdf\",\r\n  \"category\": {\r\n    \"id\": 2  // ID actualizado de una categoría diferente o existente\r\n  },\r\n  \r\n  \"author\": {\r\n    \"id\": 1  // ID de una categoría existente\r\n  }\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/books/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"books",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener todos los libros",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/books",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"books"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Paginación  de libros",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/books/page?size=5&page=0&sort=title",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"books",
+								"page"
+							],
+							"query": [
+								{
+									"key": "size",
+									"value": "5"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "sort",
+									"value": "title"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener un libro por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/books/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"books",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar un libro por ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/books/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"books",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "author",
+			"item": [
+				{
+					"name": "Listar Todos los Autores",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/authors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"authors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Paginación de autores",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/authors/page?page=0&size=10&sort=firstName",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"authors",
+								"page"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": "firstName"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crea un nuevo autor",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Julio\",\r\n  \"lastName\": \"Cortázar\",\r\n  \"bio\": \"Escritor argentino conocido por su novela 'Rayuela' y sus innovadores cuentos.\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/authors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"authors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Autor por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/authors/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"authors",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualiza un autor existente",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"firstName\": \"Isabel\",\r\n  \"lastName\": \"Allende\",\r\n  \"bio\": \"Escritora chilena, autora de 'La Casa de los Espíritus' y otras obras, conocida por su estilo único de realismo mágico.\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/admin/authors/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"authors",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Elimina un autor por su ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/admin/authors/9",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"admin",
+								"authors",
+								"9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		}
+	]
+}
