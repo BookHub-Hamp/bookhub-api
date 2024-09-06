@@ -27,3 +27,13 @@ INSERT INTO books (title, slug, description, price, cover_path, file_path, creat
                                                                                                                                ('Como Agua para Chocolate', 'como-agua-para-chocolate', 'Una novela que combina la gastronomía con el realismo mágico en la Revolución Mexicana.', 17.75, '/covers/como-agua-para-chocolate.jpg', '/files/como-agua-para-chocolate.pdf', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 5),
                                                                                                                                ('La Muerte de Artemio Cruz', 'la-muerte-de-artemio-cruz', 'Una narrativa innovadora sobre la vida de un magnate corrupto durante la Revolución Mexicana.', 21.00, '/covers/la-muerte-de-artemio-cruz.jpg', '/files/la-muerte-de-artemio-cruz.pdf', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1, 6)
     ON CONFLICT DO NOTHING;
+
+
+-- Insertar datos de prueba en la tabla customers
+INSERT INTO customers (first_name, last_name, full_name, email, password, created_at, updated_at, role)
+VALUES
+    ('John', 'Doe', 'John Doe', 'johndoe@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
+    ('Jane', 'Smith', 'Jane Smith', 'janesmith@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN'),
+    ('Alice', 'Johnson', 'Alice Johnson', 'alicejohnson@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
+    ('Bob', 'Brown', 'Bob Brown', 'bobbrown@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN')
+ON CONFLICT DO NOTHING;
