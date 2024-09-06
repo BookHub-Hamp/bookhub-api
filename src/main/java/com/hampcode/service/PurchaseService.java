@@ -7,4 +7,5 @@ public interface PurchaseService {
     Purchase confirmPurchase(Integer purchaseId); // Confirmar la compra
     List<Purchase> getAllPurchases();
     Purchase getPurchaseById(Integer id);
+    List<Purchase> getPurchaseHistoryByUserId(Integer userId);
 }

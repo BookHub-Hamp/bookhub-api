@@ -34,6 +34,12 @@ public class PurchaseController {
         return new ResponseEntity<>(savedPurchase, HttpStatus.CREATED);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Purchase>> getPurchaseHistory(@PathVariable Integer userId) {
+        List<Purchase> purchaseHistory = purchaseService.getPurchaseHistoryByUserId(userId);
+        return ResponseEntity.ok(purchaseHistory);
+    }
+
     // Endpoint para confirmar la compra (calcular total)
     @PutMapping("/confirm/{id}")
     public ResponseEntity<Purchase> confirmPurchase(@PathVariable Integer id) {

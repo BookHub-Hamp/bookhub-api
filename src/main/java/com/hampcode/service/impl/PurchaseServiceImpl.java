@@ -46,6 +46,12 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Purchase> getPurchaseHistoryByUserId(Integer userId) {
+        return purchaseRepository.findByCustomerId(userId);
+    }
+
+    @Override
     @Transactional
     public Purchase confirmPurchase(Integer purchaseId) {
         Purchase purchase = getPurchaseById(purchaseId);
