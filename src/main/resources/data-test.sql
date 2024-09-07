@@ -32,8 +32,9 @@ INSERT INTO books (title, slug, description, price, cover_path, file_path, creat
 -- Insertar datos de prueba en la tabla customers
 INSERT INTO customers (first_name, last_name, full_name, email, password, created_at, updated_at, role)
 VALUES
-    ('John', 'Doe', 'John Doe', 'johndoe@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
-    ('Jane', 'Smith', 'Jane Smith', 'janesmith@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN'),
-    ('Alice', 'Johnson', 'Alice Johnson', 'alicejohnson@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
-    ('Bob', 'Brown', 'Bob Brown', 'bobbrown@example.com', '$2a$10$zN9pETe48bnxKl7.qeER/OTJXoFt1jqB3yJAC0R5sOSvI4HHmdTLq', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN')
+    ('John', 'Doe', 'John Doe', 'johndoe@example.com', 'password123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
+    ('Jane', 'Smith', 'Jane Smith', 'janesmith@example.com', 'password123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN'),
+    ('Alice', 'Johnson', 'Alice Johnson', 'alicejohnson@example.com', 'password123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'USER'),
+    ('Bob', 'Brown', 'Bob Brown', 'bobbrown@example.com', 'password123', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'ADMIN')
+
 ON CONFLICT DO NOTHING;
