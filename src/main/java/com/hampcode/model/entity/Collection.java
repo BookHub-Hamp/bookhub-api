@@ -1,5 +1,6 @@
 package com.hampcode.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ public class Collection {
             foreignKey = @ForeignKey(name = "fk_collection_users"))
     private User customer;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL)
     private List<CollectionBook> collectionBooks;
 }
