@@ -22,11 +22,6 @@ public class PurchaseController {
         return ResponseEntity.ok(purchases);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Purchase> getPurchaseById(@PathVariable Integer id) {
-        Purchase purchase = purchaseService.getPurchaseById(id);
-        return ResponseEntity.ok(purchase);
-    }
 
     @PostMapping
     public ResponseEntity<Purchase> createPurchase(@RequestBody Purchase purchase) {
@@ -38,6 +33,13 @@ public class PurchaseController {
     public ResponseEntity<List<Purchase>> getPurchaseHistory(@PathVariable Integer userId) {
         List<Purchase> purchaseHistory = purchaseService.getPurchaseHistoryByUserId(userId);
         return ResponseEntity.ok(purchaseHistory);
+    }
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Purchase> getPurchaseById(@PathVariable Integer id) {
+        Purchase purchase = purchaseService.getPurchaseById(id);
+        return ResponseEntity.ok(purchase);
     }
 
     // Endpoint para confirmar la compra (calcular total)
