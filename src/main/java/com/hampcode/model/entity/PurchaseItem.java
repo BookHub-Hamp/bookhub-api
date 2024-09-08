@@ -12,8 +12,9 @@ public class PurchaseItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private Float price;
-    @Column(name = "downs_ava")
-    private Integer downloadsAvailable;
+
+    @Column(name = "quantity")
+    private Integer quantity;
 
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id"

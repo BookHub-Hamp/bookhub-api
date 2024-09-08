@@ -28,21 +28,19 @@ public class PurchaseServiceImpl implements PurchaseService {
         // Asignar el estado de pago en PENDING
         purchase.setPaymentStatus(PaymentStatus.PENDING);
 
-        // Asignar la compra a cada PurchaseItem usando lambda y streams
+        // Calcular el total basado en la cantidad de libros comprados (quantity)
+        Float total = purchase.getItems()
+                .stream()
+                .map(item -> item.getPrice() * item.getQuantity()) // Multiplicar precio por cantidad
+                .reduce(0f, Float::sum); // Sumar todos los precios
+
+        purchase.setTotal(total); // Asignar el total calculado
+
+        // Asignar la compra a cada PurchaseItem
         purchase.getItems().forEach(item -> item.setPurchase(purchase));
 
+        // Guardar la compra
         return purchaseRepository.save(purchase);
-    }
-
-    @Override
-    public List<Purchase> getAllPurchases() {
-        return purchaseRepository.findAll();
-    }
-
-    @Override
-    public Purchase getPurchaseById(Integer id) {
-        return purchaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Purchase not found"));
     }
 
     @Override
@@ -50,6 +48,22 @@ public class PurchaseServiceImpl implements PurchaseService {
     public List<Purchase> getPurchaseHistoryByUserId(Integer userId) {
         return purchaseRepository.findByCustomerId(userId);
     }
+
+
+    @Override
+    public List<Purchase> getAllPurchases() {
+        return purchaseRepository.findAll();
+    }
+
+
+
+    @Override
+    public Purchase getPurchaseById(Integer id) {
+        return purchaseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Purchase not found"));
+    }
+
+
 
     @Override
     @Transactional
@@ -59,7 +73,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         // Confirmar la compra y calcular el total usando Stream API y lambda
         Float total = purchase.getItems()
                 .stream()
-                .map(item -> item.getPrice() * item.getDownloadsAvailable())
+                .map(item -> item.getPrice() * item.getQuantity())
                 .reduce(0f, Float::sum);
 
         purchase.setTotal(total);
