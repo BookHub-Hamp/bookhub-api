@@ -1,5 +1,7 @@
 package com.hampcode.api;
 
+import com.hampcode.dto.PurchaseCreateDTO;
+import com.hampcode.dto.PurchaseDTO;
 import com.hampcode.model.entity.Purchase;
 import com.hampcode.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +26,14 @@ public class PurchaseController {
 
 
     @PostMapping
-    public ResponseEntity<Purchase> createPurchase(@RequestBody Purchase purchase) {
-        Purchase savedPurchase = purchaseService.createPurchase(purchase);
+    public ResponseEntity<PurchaseDTO> createPurchase(@RequestBody PurchaseCreateDTO purchaseCreateDTO) {
+        PurchaseDTO savedPurchase = purchaseService.createPurchase(purchaseCreateDTO);
         return new ResponseEntity<>(savedPurchase, HttpStatus.CREATED);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Purchase>> getPurchaseHistory(@PathVariable Integer userId) {
-        List<Purchase> purchaseHistory = purchaseService.getPurchaseHistoryByUserId(userId);
+    public ResponseEntity<List<PurchaseDTO>> getPurchaseHistory(@PathVariable Integer userId) {
+        List<PurchaseDTO> purchaseHistory = purchaseService.getPurchaseHistoryByUserId(userId);
         return ResponseEntity.ok(purchaseHistory);
     }
 

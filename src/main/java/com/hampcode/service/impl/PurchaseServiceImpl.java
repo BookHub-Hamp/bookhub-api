@@ -1,9 +1,17 @@
 package com.hampcode.service.impl;
 
+import com.hampcode.dto.PurchaseCreateDTO;
+import com.hampcode.dto.PurchaseDTO;
+import com.hampcode.exception.ResourceNotFoundException;
+import com.hampcode.mapper.PurchaseMapper;
+import com.hampcode.model.entity.Book;
 import com.hampcode.model.entity.Purchase;
 import com.hampcode.model.entity.PurchaseItem;
+import com.hampcode.model.entity.User;
 import com.hampcode.model.enums.PaymentStatus;
+import com.hampcode.repository.BookRepository;
 import com.hampcode.repository.PurchaseRepository;
+import com.hampcode.repository.UserRepository;
 import com.hampcode.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,35 +26,52 @@ import java.util.stream.Collectors;
 public class PurchaseServiceImpl implements PurchaseService {
 
     private final PurchaseRepository purchaseRepository;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
+    private final PurchaseMapper purchaseMapper;
+
 
     @Override
     @Transactional
-    public Purchase createPurchase(Purchase purchase) {
-        // Establecer la fecha de creación
-        purchase.setCreatedAt(LocalDateTime.now());
+    public PurchaseDTO createPurchase(PurchaseCreateDTO purchaseCreateDTO) {
+        //Convertir PurchaseCreateDTO a Purchase
+        Purchase purchase = purchaseMapper.toPurchaseCreateDTO(purchaseCreateDTO);
 
-        // Asignar el estado de pago en PENDING
-        purchase.setPaymentStatus(PaymentStatus.PENDING);
+        User customer = userRepository.findById(purchaseCreateDTO.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        // Calcular el total basado en la cantidad de libros comprados (quantity)
+        purchase.getItems().forEach(item->{
+            Book book = bookRepository.findById(item.getBook().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+            item.setBook(book);//Asignar el libro al item
+            item.setPurchase(purchase);//Asignar la compra al item
+        });
+
         Float total = purchase.getItems()
                 .stream()
-                .map(item -> item.getPrice() * item.getQuantity()) // Multiplicar precio por cantidad
-                .reduce(0f, Float::sum); // Sumar todos los precios
+                .map(item -> item.getPrice() * item.getQuantity())
+                .reduce(0f, Float::sum);
 
-        purchase.setTotal(total); // Asignar el total calculado
-
-        // Asignar la compra a cada PurchaseItem
+        purchase.setCreatedAt(LocalDateTime.now());
+        purchase.setPaymentStatus(PaymentStatus.PENDING);
+        purchase.setCustomer(customer);
+        purchase.setTotal(total);
         purchase.getItems().forEach(item -> item.setPurchase(purchase));
 
-        // Guardar la compra
-        return purchaseRepository.save(purchase);
+
+
+
+        Purchase savePurchase = purchaseRepository.save(purchase);
+
+        return purchaseMapper.toPurchaseDTO(savePurchase);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Purchase> getPurchaseHistoryByUserId(Integer userId) {
-        return purchaseRepository.findByCustomerId(userId);
+    public List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId) {
+        return purchaseRepository.findByCustomerId(userId).stream()
+                .map(purchaseMapper::toPurchaseDTO)
+                .toList();
     }
 
 

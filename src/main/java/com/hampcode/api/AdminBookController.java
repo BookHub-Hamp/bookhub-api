@@ -1,7 +1,10 @@
 package com.hampcode.api;
 
+import com.hampcode.dto.BookCreateUpdateDTO;
+import com.hampcode.dto.BookDetailsDTO;
 import com.hampcode.model.entity.Book;
 import com.hampcode.service.AdminBookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,33 +22,34 @@ public class AdminBookController {
     private final AdminBookService adminBookService;
 
     @GetMapping
-    public ResponseEntity<List<Book>> list() {
-        List<Book> books = adminBookService.findAll();
+    public ResponseEntity<List<BookDetailsDTO>> list() {
+        List<BookDetailsDTO> books = adminBookService.findAll();
         return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<Book>> paginate(
+    public ResponseEntity<Page<BookDetailsDTO>> paginate(
             @PageableDefault(size = 5, sort = "title") Pageable pageable) {
-        Page<Book> page = adminBookService.paginate(pageable);
+        Page<BookDetailsDTO> page = adminBookService.paginate(pageable);
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Book> create(@RequestBody Book bookFormDTO) {
-        Book createdBook = adminBookService.create(bookFormDTO);
+    public ResponseEntity<BookDetailsDTO> create(@Valid @RequestBody BookCreateUpdateDTO bookFormDTO) {
+        BookDetailsDTO createdBook = adminBookService.create(bookFormDTO);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Book> get(@PathVariable Integer id) {
-        Book book = adminBookService.findById(id);
+    public ResponseEntity<BookDetailsDTO> get(@PathVariable Integer id) {
+        BookDetailsDTO book = adminBookService.findById(id);
         return new ResponseEntity<>(book, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> update(@PathVariable Integer id, @RequestBody Book bookFormDTO) {
-        Book updatedBook = adminBookService.update(id, bookFormDTO);
+    public ResponseEntity<BookDetailsDTO> update(@PathVariable Integer id,
+                                                 @Valid @RequestBody BookCreateUpdateDTO bookFormDTO) {
+        BookDetailsDTO updatedBook = adminBookService.update(id, bookFormDTO);
         return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }
 
