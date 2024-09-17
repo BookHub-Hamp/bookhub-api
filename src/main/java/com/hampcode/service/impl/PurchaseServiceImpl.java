@@ -2,6 +2,7 @@ package com.hampcode.service.impl;
 
 import com.hampcode.dto.PurchaseCreateDTO;
 import com.hampcode.dto.PurchaseDTO;
+import com.hampcode.dto.PurchaseReportDTO;
 import com.hampcode.exception.ResourceNotFoundException;
 import com.hampcode.mapper.PurchaseMapper;
 import com.hampcode.model.entity.Book;
@@ -72,6 +73,21 @@ public class PurchaseServiceImpl implements PurchaseService {
         return purchaseRepository.findByCustomerId(userId).stream()
                 .map(purchaseMapper::toPurchaseDTO)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<PurchaseReportDTO> getPurchaseReportByDate() {
+        List<Object[]> results = purchaseRepository.getPurchaseReportByDate();
+        //Mapeo de la lista de objetos a una lista de PurchaseReportDTO
+        List<PurchaseReportDTO> purchaseReportDTOS = results.stream()
+                .map(result ->
+                        new PurchaseReportDTO (
+                                ((Integer)result[0]).intValue(),
+                                (String)result[1]
+                        )
+                ).toList();
+        return purchaseReportDTOS;
     }
 
 

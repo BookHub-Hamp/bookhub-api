@@ -2,6 +2,7 @@ package com.hampcode.api;
 
 import com.hampcode.dto.PurchaseCreateDTO;
 import com.hampcode.dto.PurchaseDTO;
+import com.hampcode.dto.PurchaseReportDTO;
 import com.hampcode.model.entity.Purchase;
 import com.hampcode.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,11 @@ public class PurchaseController {
         return ResponseEntity.ok(purchaseHistory);
     }
 
+    @GetMapping("/report")
+    public ResponseEntity<List<PurchaseReportDTO>> getPurchaseReport(){
+        List<PurchaseReportDTO> reports = purchaseService.getPurchaseReportByDate();
+        return ResponseEntity.ok(reports);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Purchase> getPurchaseById(@PathVariable Integer id) {
