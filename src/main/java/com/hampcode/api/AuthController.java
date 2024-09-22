@@ -1,6 +1,7 @@
 package com.hampcode.api;
 
-import com.hampcode.model.entity.User;
+import com.hampcode.dto.UserRegistrationDTO;
+import com.hampcode.dto.UserProfileDTO;
 import com.hampcode.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,9 +15,17 @@ public class AuthController {
 
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user) {
-        User newUser = userService.registerUser(user);
-        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
+    // Endpoint para registrar clientes
+    @PostMapping("/register/customer")
+    public ResponseEntity<UserProfileDTO> registerCustomer(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+        UserProfileDTO userProfile = userService.registerCustomer(userRegistrationDTO);
+        return new ResponseEntity<>(userProfile, HttpStatus.CREATED);
+    }
+
+    // Endpoint para registrar autores
+    @PostMapping("/register/author")
+    public ResponseEntity<UserProfileDTO> registerAuthor(@RequestBody UserRegistrationDTO userRegistrationDTO) {
+        UserProfileDTO userProfile = userService.registerAuthor(userRegistrationDTO);
+        return new ResponseEntity<>(userProfile, HttpStatus.CREATED);
     }
 }
