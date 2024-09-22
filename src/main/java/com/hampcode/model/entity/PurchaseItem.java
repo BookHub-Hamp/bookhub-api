@@ -16,6 +16,9 @@ public class PurchaseItem {
     @Column(name = "quantity")
     private Integer quantity;
 
+    @Column(name = "downs_ava")
+    private Integer downsAva;
+
     @ManyToOne
     @JoinColumn(name = "book_id", referencedColumnName = "id"
             , foreignKey = @ForeignKey(name = "FK_purchase_item_book"))
