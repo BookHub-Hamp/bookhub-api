@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 public interface PurchaseRepository extends JpaRepository<Purchase, Integer> {
-    List<Purchase> findByCustomerId(Integer customerId);
+    //List<Purchase> findByCustomerId(Integer customerId);
+    List<Purchase> findByUserId(Integer userId);
+
 
     @Query(value = "SELECT * FROM fn_list_purchase_report() ", nativeQuery = true)
     List<Object[]> getPurchaseReportByDate();

@@ -38,7 +38,11 @@ public class PurchaseServiceImpl implements PurchaseService {
         //Convertir PurchaseCreateDTO a Purchase
         Purchase purchase = purchaseMapper.toPurchaseCreateDTO(purchaseCreateDTO);
 
-        User customer = userRepository.findById(purchaseCreateDTO.getCustomerId())
+        /*User customer = userRepository.findById(purchaseCreateDTO.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));*/
+
+        // Buscar el usuario (antes 'customer')
+        User user = userRepository.findById(purchaseCreateDTO.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         purchase.getItems().forEach(item->{
@@ -55,7 +59,8 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         purchase.setCreatedAt(LocalDateTime.now());
         purchase.setPaymentStatus(PaymentStatus.PENDING);
-        purchase.setCustomer(customer);
+        //purchase.setCustomer(customer);
+        purchase.setUser(user);  // Cambiado a 'user'
         purchase.setTotal(total);
         purchase.getItems().forEach(item -> item.setPurchase(purchase));
 
@@ -70,7 +75,10 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional(readOnly = true)
     public List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId) {
-        return purchaseRepository.findByCustomerId(userId).stream()
+        /*return purchaseRepository.findByCustomerId(userId).stream()
+                .map(purchaseMapper::toPurchaseDTO)
+                .toList();*/
+        return purchaseRepository.findByUserId(userId).stream()
                 .map(purchaseMapper::toPurchaseDTO)
                 .toList();
     }
