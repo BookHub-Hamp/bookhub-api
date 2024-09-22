@@ -1,5 +1,4 @@
 package com.hampcode.security;
-
 import com.hampcode.model.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,13 +22,15 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal create(User user) {
-        // Asignar el rol del usuario
-        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getName().name());
+        // Asegúrate de que el rol se asigna correctamente
+        String roleName = user.getRole().getName().name(); // O usar getName() si es un String
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + roleName); // Agrega el prefijo "ROLE_"
+
         return new UserPrincipal(
                 user.getId(),
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singletonList(authority)
+                Collections.singletonList(authority) // Lista con un solo rol
         );
     }
 

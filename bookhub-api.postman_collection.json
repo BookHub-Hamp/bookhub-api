@@ -338,7 +338,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoZW5yeS5tZW5kb3phcEBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJmaXJzdE5hbWUiOiJIZW5yeSIsImxhc3ROYW1lIjoiTWVuZG96YSBQdWVydGEiLCJleHAiOjE3MjkwMzA0MTJ9.MB_8jQGwS3OPC-KlW4xeW0GqmxjgAQo0sLbtGHsFB1obVlBvvKUVCiLc-x0x2JHazDxe9rp0bcgxY5Ga5t6P5Q",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzI5NjI5NzE2fQ.7gsQ3QsJguTvCtocSYMjS8rfyb-qwu784EC7UR2wUhAOebAu4GBeorcTULWkUW-n0nWR6g9DyVJDSp_HI1V1Tw",
 									"type": "string"
 								}
 							]
@@ -516,7 +516,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJmaXJzdE5hbWUiOiJBZG1pbiIsImxhc3ROYW1lIjoiQWRtaW4gQWRtaW4iLCJleHAiOjE3MjkxNzg2OTl9.SGrjzY_sA1OxRc7PXanB_gktvn_AzRNwUv6LaoRKGwTEnJKx3XSAZ0ZdCyGeIuejMSw620fDqpUR_jSOJfi1yQ",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb3JnZS5wZXJlekBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0NVU1RPTUVSIiwiZXhwIjoxNzI5NjMwMjc5fQ.e6EtTdBgsvHjr9bFZQnFJQXDCJz3J9czkKzspJ7-vWxk4b3tJL9tZStmeYOvYhcM2Vdpw2hl_LBRoYXvC4h9dw",
 									"type": "string"
 								}
 							]
@@ -552,7 +552,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoZW5yeS5tZW5kb3phcEBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJmaXJzdE5hbWUiOiJIZW5yeSIsImxhc3ROYW1lIjoiTWVuZG96YSBQdWVydGEiLCJleHAiOjE3MjkwNDU5OTV9.upXO04lUmViteQEfK8tRcxpFaebE6iX8z1esmK5klJrhPOzrrt7N55OUu0zsDeJ8Lt9j1iY0dtTP7I16Z_cKww",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb3JnZS5wZXJlekBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0NVU1RPTUVSIiwiZXhwIjoxNzI5NjMwMjc5fQ.e6EtTdBgsvHjr9bFZQnFJQXDCJz3J9czkKzspJ7-vWxk4b3tJL9tZStmeYOvYhcM2Vdpw2hl_LBRoYXvC4h9dw",
 									"type": "string"
 								}
 							]
@@ -824,7 +824,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"admin@example.com\",\r\n  \"password\": \"password123\"\r\n}\r\n",
+							"raw": "{\r\n  \"email\": \"jorge.perez@example.com\",\r\n  \"password\": \"password123\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"

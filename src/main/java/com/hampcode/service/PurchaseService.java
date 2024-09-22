@@ -7,7 +7,8 @@ import com.hampcode.model.entity.Purchase;
 import java.util.List;
 public interface PurchaseService {
     PurchaseDTO createPurchase(PurchaseCreateDTO purchaseCreateDTO); // Crear la compra
-    List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId);
+    //List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId);
+    List<PurchaseDTO> getPurchaseHistoryByUserId();
     List<PurchaseReportDTO> getPurchaseReportByDate();
 
 

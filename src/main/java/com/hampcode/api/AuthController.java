@@ -1,5 +1,7 @@
 package com.hampcode.api;
 
+import com.hampcode.dto.AuthResponseDTO;
+import com.hampcode.dto.LoginDTO;
 import com.hampcode.dto.UserRegistrationDTO;
 import com.hampcode.dto.UserProfileDTO;
 import com.hampcode.service.UserService;
@@ -27,5 +29,19 @@ public class AuthController {
     public ResponseEntity<UserProfileDTO> registerAuthor(@RequestBody UserRegistrationDTO userRegistrationDTO) {
         UserProfileDTO userProfile = userService.registerAuthor(userRegistrationDTO);
         return new ResponseEntity<>(userProfile, HttpStatus.CREATED);
+    }
+
+    // Endpoint para el login
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO) {
+        AuthResponseDTO authResponse = userService.login(loginDTO);
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
+    }
+
+    // Login específico para Administradores
+    @PostMapping("/admin/login")
+    public ResponseEntity<AuthResponseDTO> adminLogin(@RequestBody LoginDTO loginDTO) {
+        AuthResponseDTO authResponse = userService.adminLogin(loginDTO);
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 }
