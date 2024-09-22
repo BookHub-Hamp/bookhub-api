@@ -1,5 +1,7 @@
 package com.hampcode.mapper;
 
+import com.hampcode.dto.AuthResponseDTO;
+import com.hampcode.dto.LoginDTO;
 import com.hampcode.dto.UserProfileDTO;
 import com.hampcode.dto.UserRegistrationDTO;
 import com.hampcode.model.entity.User;
@@ -40,8 +42,30 @@ public class UserMapper {
         return userProfileDTO;
     }
 
-    // Convertir de User a UserProfileDTO (si existe para mostrar el perfil del usuario)
-  /*  public UserProfileDTO toUserProfileDTO(User user) {
-        return modelMapper.map(user, UserProfileDTO.class);
-    }*/
+    // Convertir de LoginDTO a User (cuando procesas el login)
+    public User toUserEntity(LoginDTO loginDTO) {
+        return modelMapper.map(loginDTO, User.class);
+    }
+
+    // Convertir de User a AuthResponseDTO para la respuesta de autenticación
+    public AuthResponseDTO toAuthResponseDTO(User user, String token) {
+        AuthResponseDTO authResponseDTO = new AuthResponseDTO();
+        authResponseDTO.setToken(token); // Asignar el token
+
+        // Si es cliente, asignar los datos de cliente
+        if (user.getCustomer() != null) {
+            authResponseDTO.setFirstName(user.getCustomer().getFirstName());
+            authResponseDTO.setLastName(user.getCustomer().getLastName());
+        }
+        // Si es autor, asignar los datos de autor
+        if (user.getAuthor() != null) {
+            authResponseDTO.setFirstName(user.getAuthor().getFirstName());
+            authResponseDTO.setLastName(user.getAuthor().getLastName());
+        }
+
+        // Asignar el rol del usuario
+        authResponseDTO.setRole(user.getRole().getName().toString());
+
+        return authResponseDTO;
+    }
 }

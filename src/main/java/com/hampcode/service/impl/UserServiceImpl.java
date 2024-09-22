@@ -1,7 +1,10 @@
 package com.hampcode.service.impl;
 
+import com.hampcode.dto.AuthResponseDTO;
+import com.hampcode.dto.LoginDTO;
 import com.hampcode.dto.UserProfileDTO;
 import com.hampcode.dto.UserRegistrationDTO;
+import com.hampcode.exception.InvalidCredentialsException;
 import com.hampcode.mapper.UserMapper;
 import com.hampcode.model.entity.Author;
 import com.hampcode.model.entity.Customer;
@@ -10,13 +13,20 @@ import com.hampcode.model.entity.User;
 import com.hampcode.model.enums.ERole;
 import com.hampcode.repository.RoleRepository;
 import com.hampcode.repository.UserRepository;
+import com.hampcode.security.TokenProvider;
 import com.hampcode.service.UserService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -27,6 +37,9 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+
+    private final AuthenticationManager authenticationManager; // Necesario para la autenticación
+    private final TokenProvider tokenProvider; // Necesario para la creación de tokens JWT
 
     @Transactional
     @Override
@@ -39,6 +52,56 @@ public class UserServiceImpl implements UserService {
     public UserProfileDTO registerAuthor(UserRegistrationDTO registrationDTO) {
         return registerUserWithRole(registrationDTO, ERole.AUTHOR);
     }
+
+    // Implementación del método login
+    @Transactional
+    @Override
+    public AuthResponseDTO login(LoginDTO loginDTO) {
+        // Buscar el usuario por email
+        User user = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + loginDTO.getEmail()));
+
+        // Verificar si la contraseña es correcta
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
+            throw new InvalidCredentialsException("Credenciales incorrectas");
+        }
+
+        // Autenticar al usuario
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+        );
+
+        // Generar el token JWT usando el TokenProvider
+        String token = tokenProvider.createAccessToken(authentication);
+
+        // Devolver la respuesta de autenticación (token y perfil del usuario)
+        return userMapper.toAuthResponseDTO(user, token);
+    }
+
+
+    @Transactional
+    public AuthResponseDTO adminLogin(LoginDTO loginDTO) {
+        // Autenticación de administrador
+        User user = userRepository.findByEmail(loginDTO.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword()) ||
+                !user.getRole().getName().equals(ERole.ADMIN)) {
+            throw new RuntimeException("Credenciales erróneas o no es administrador");
+        }
+
+        // Autenticar al usuario
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+        );
+
+        // Generar el token JWT usando el TokenProvider
+        String token = tokenProvider.createAccessToken(authentication);
+
+
+        return userMapper.toAuthResponseDTO(user, token);
+    }
+
 
     // Método genérico para registrar un usuario con un rol específico
     private UserProfileDTO registerUserWithRole(UserRegistrationDTO registrationDTO, ERole roleEnum) {
