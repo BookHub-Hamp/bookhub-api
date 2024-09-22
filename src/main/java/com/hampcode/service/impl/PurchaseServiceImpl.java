@@ -15,6 +15,8 @@ import com.hampcode.repository.PurchaseRepository;
 import com.hampcode.repository.UserRepository;
 import com.hampcode.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +44,16 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));*/
 
         // Buscar el usuario (antes 'customer')
-        User user = userRepository.findById(purchaseCreateDTO.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+       /* User user = userRepository.findById(purchaseCreateDTO.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));*/
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = null;
+
+        if (authentication != null && !authentication.getPrincipal().equals("anonymousUser")) {
+            user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(ResourceNotFoundException::new);
+        }
 
         purchase.getItems().forEach(item->{
             Book book = bookRepository.findById(item.getBook().getId())
@@ -74,11 +84,21 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId) {
+    //public List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId) {
+    public List<PurchaseDTO> getPurchaseHistoryByUserId() {
         /*return purchaseRepository.findByCustomerId(userId).stream()
                 .map(purchaseMapper::toPurchaseDTO)
                 .toList();*/
-        return purchaseRepository.findByUserId(userId).stream()
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = null;
+
+        if (authentication != null && !authentication.getPrincipal().equals("anonymousUser")) {
+            user = userRepository.findByEmail(authentication.getName())
+                    .orElseThrow(ResourceNotFoundException::new);
+        }
+
+        return purchaseRepository.findByUserId(user.getId()).stream()
                 .map(purchaseMapper::toPurchaseDTO)
                 .toList();
     }

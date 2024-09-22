@@ -8,6 +8,7 @@ import com.hampcode.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/purchases")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('CUSTOMER')") // Aplicar restricción a nivel de clase
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
@@ -32,9 +34,11 @@ public class PurchaseController {
         return new ResponseEntity<>(savedPurchase, HttpStatus.CREATED);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PurchaseDTO>> getPurchaseHistory(@PathVariable Integer userId) {
-        List<PurchaseDTO> purchaseHistory = purchaseService.getPurchaseHistoryByUserId(userId);
+    //@GetMapping("/user/{userId}")
+    //public ResponseEntity<List<PurchaseDTO>> getPurchaseHistory(@PathVariable Integer userId) {
+    @GetMapping("/user")
+    public ResponseEntity<List<PurchaseDTO>> getPurchaseHistory() {
+        List<PurchaseDTO> purchaseHistory = purchaseService.getPurchaseHistoryByUserId();
         return ResponseEntity.ok(purchaseHistory);
     }
 
