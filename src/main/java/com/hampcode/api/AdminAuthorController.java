@@ -1,7 +1,9 @@
 package com.hampcode.api;
 
+import com.hampcode.dto.AuthorDTO;
 import com.hampcode.model.entity.Author;
 import com.hampcode.service.AdminAuthorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,33 +22,33 @@ public class AdminAuthorController {
     private final AdminAuthorService adminAuthorService;
 
     @GetMapping
-    public ResponseEntity<List<Author>> listAll() {
-        List<Author> authors = adminAuthorService.getAll();
+    public ResponseEntity<List<AuthorDTO>> listAll() {
+        List<AuthorDTO> authors = adminAuthorService.getAll();
         return new ResponseEntity<>(authors, HttpStatus.OK);
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<Author>> paginate(@PageableDefault(size = 5, sort = "firstName")
+    public ResponseEntity<Page<AuthorDTO>> paginate(@PageableDefault(size = 5, sort = "firstName")
                                                      Pageable pageable) {
-        Page<Author> page = adminAuthorService.paginate(pageable);
+        Page<AuthorDTO> page = adminAuthorService.paginate(pageable);
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Author> create(@RequestBody Author author) {
-        Author createdAuthor = adminAuthorService.create(author);
+    public ResponseEntity<AuthorDTO> create(@Valid @RequestBody AuthorDTO authorDTO) {
+        AuthorDTO createdAuthor = adminAuthorService.create(authorDTO);
         return new ResponseEntity<>(createdAuthor, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Author> getById(@PathVariable Integer id) {
-        Author author = adminAuthorService.findById(id);
+    public ResponseEntity<AuthorDTO> getById(@PathVariable Integer id) {
+        AuthorDTO author = adminAuthorService.findById(id);
         return new ResponseEntity<>(author, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> update(@PathVariable Integer id, @RequestBody Author author) {
-        Author updatedAuthor = adminAuthorService.update(id, author);
+    public ResponseEntity<AuthorDTO> update(@PathVariable Integer id,@Valid @RequestBody AuthorDTO authorDTO) {
+        AuthorDTO updatedAuthor = adminAuthorService.update(id, authorDTO);
         return new ResponseEntity<>(updatedAuthor, HttpStatus.OK);
     }
 
