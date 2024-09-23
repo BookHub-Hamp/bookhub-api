@@ -338,7 +338,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzI5NjI5NzE2fQ.7gsQ3QsJguTvCtocSYMjS8rfyb-qwu784EC7UR2wUhAOebAu4GBeorcTULWkUW-n0nWR6g9DyVJDSp_HI1V1Tw",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb3JnZS5wZXJlekBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0NVU1RPTUVSIiwiZXhwIjoxNzI5NjQxOTk0fQ.JeOE1_qwOHG5FEJ8jyLje_LVk6MbSIMTcp6SKb10_1_lNBA6STcxS1XiyI8mZJ1EYBVTxzJxL_ePsryc7nM8wA",
 									"type": "string"
 								}
 							]
@@ -516,7 +516,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb3JnZS5wZXJlekBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0NVU1RPTUVSIiwiZXhwIjoxNzI5NjMwMjc5fQ.e6EtTdBgsvHjr9bFZQnFJQXDCJz3J9czkKzspJ7-vWxk4b3tJL9tZStmeYOvYhcM2Vdpw2hl_LBRoYXvC4h9dw",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzI5NjQxOTIwfQ.Pl1WtdReYnkq4aiOaO37UbLSAs3DpW7s_MGOIu6cv47WFRHVpcctVjub0g7JJOkrvrMPHkuwYAGh9I-t3Ts3mA",
 									"type": "string"
 								}
 							]
@@ -796,7 +796,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Jorge\",\r\n    \"lastName\": \"Perez\",\r\n    \"email\": \"jorge.perez@example.com\",\r\n    \"password\": \"password123\",\r\n    \"shippingAddress\": \"123 Calle Falsa\"\r\n}\r\n",
+							"raw": "{\r\n    \"firstName\": \"Jorge\",\r\n    \"lastName\": \"Perez Mendoza\",\r\n    \"email\": \"jorgemendoza.perez@example.com\",\r\n    \"password\": \"password123\",\r\n    \"shippingAddress\": \"123 Calle Falsa\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -981,17 +981,27 @@
 				{
 					"name": "Obtener el perfil de un usuario por su ID",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb3JnZS5wZXJlekBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0NVU1RPTUVSIiwiZXhwIjoxNzI5NjQyNzQ2fQ.sJdtuUznYWnL861yENQpXf_2_StB-FzgtA9crHyLNzB0pBv_ujQ9p2TV-z_cPEUZ_xaxSjabtuHHxOpBwgli9Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/user/profile/3",
+							"raw": "{{base_url}}/user/profile/2",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"user",
 								"profile",
-								"3"
+								"2"
 							]
 						}
 					},
@@ -1000,11 +1010,21 @@
 				{
 					"name": "Actualizar el perfil de un usuario",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJqb3JnZS5wZXJlekBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0NVU1RPTUVSIiwiZXhwIjoxNzI5NjQyNzQ2fQ.sJdtuUznYWnL861yENQpXf_2_StB-FzgtA9crHyLNzB0pBv_ujQ9p2TV-z_cPEUZ_xaxSjabtuHHxOpBwgli9Q",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Carlos\",\r\n    \"lastName\": \"Lopez\",\r\n    \"shippingAddress\": \"456 Nueva Direccion\"\r\n}\r\n",
+							"raw": "{\r\n    \"firstName\": \"Jorge\",\r\n    \"lastName\": \"Lopez\",\r\n    \"shippingAddress\": \"456 Nueva Direccion\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"

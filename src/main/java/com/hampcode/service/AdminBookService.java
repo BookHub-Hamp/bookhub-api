@@ -15,4 +15,6 @@ public interface AdminBookService {
     BookDetailsDTO create(BookCreateUpdateDTO bookCreateUpdateDTO);
     BookDetailsDTO update(Integer id, BookCreateUpdateDTO updateBookDTO);
     void delete(Integer id);
+
+    List<BookDetailsDTO> findTop6BooksByCreatedAt();
 }

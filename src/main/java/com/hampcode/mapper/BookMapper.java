@@ -35,4 +35,14 @@ public class BookMapper {
         return modelMapper.map(book, BookCreateUpdateDTO.class);
     }
 
+    // Mapeo de Book a BookDetailsDTO (para mostrar información completa)
+    public BookDetailsDTO toDetailsDto(Book book) {
+        BookDetailsDTO bookDetailsDTO = modelMapper.map(book, BookDetailsDTO.class);
+        // Mapear manualmente el nombre del autor concatenando firstName y lastName
+        bookDetailsDTO.setAuthorName(book.getAuthor().getFirstName() + " " + book.getAuthor().getLastName());
+        // Mapear manualmente el nombre de la categoría
+        bookDetailsDTO.setCategoryName(book.getCategory().getName());
+        return bookDetailsDTO;
+    }
+
 }
