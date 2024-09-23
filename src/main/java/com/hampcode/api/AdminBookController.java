@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/books")
-@PreAuthorize("hasRole('ADMIN')")  // Aplicar la restricción a nivel de clase
+@PreAuthorize("hasAnyRole('ADMIN', 'AUTHOR')")  // Permitir solo a CUSTOMER y AUTHOR
 public class AdminBookController {
     private final AdminBookService adminBookService;
 

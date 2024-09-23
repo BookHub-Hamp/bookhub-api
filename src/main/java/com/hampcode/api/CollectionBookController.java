@@ -6,6 +6,7 @@ import com.hampcode.service.CollectionBookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/collections-books")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")  // Permitir solo a CUSTOMER y ADMIN
 public class CollectionBookController {
 
     private final CollectionBookService collectionBookService;
