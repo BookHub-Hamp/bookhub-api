@@ -117,4 +117,12 @@ public class AdminBookServiceImpl implements AdminBookService {
                 .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
         bookRepository.delete(book);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookDetailsDTO> findTop6BooksByCreatedAt() {
+        return bookRepository.findTop6ByOrderByCreatedAtDesc().stream()
+                .map(bookMapper::toDetailsDto)
+                .toList();
+    }
 }

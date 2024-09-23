@@ -52,15 +52,21 @@ public class UserMapper {
         AuthResponseDTO authResponseDTO = new AuthResponseDTO();
         authResponseDTO.setToken(token); // Asignar el token
 
+
         // Si es cliente, asignar los datos de cliente
         if (user.getCustomer() != null) {
             authResponseDTO.setFirstName(user.getCustomer().getFirstName());
             authResponseDTO.setLastName(user.getCustomer().getLastName());
         }
         // Si es autor, asignar los datos de autor
-        if (user.getAuthor() != null) {
+        else if (user.getAuthor() != null) {
             authResponseDTO.setFirstName(user.getAuthor().getFirstName());
             authResponseDTO.setLastName(user.getAuthor().getLastName());
+        }
+        // Para cualquier usuario que no sea cliente ni autor (ej. Admin)
+        else {
+            authResponseDTO.setFirstName("Admin");
+            authResponseDTO.setLastName("User");
         }
 
         // Asignar el rol del usuario

@@ -16,7 +16,6 @@ public interface UserService {
     // Autenticar usuario (login)
     AuthResponseDTO login(LoginDTO loginDTO);
 
-    AuthResponseDTO adminLogin(LoginDTO loginDTO);
 
     // Actualizar el perfil de usuario
     UserProfileDTO updateUserProfile(Integer id, UserProfileDTO userProfileDTO);
