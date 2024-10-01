@@ -5,34 +5,17 @@ import com.hampcode.dto.BookDetailsDTO;
 import com.hampcode.model.entity.Book;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BookMapper {
+
     private final ModelMapper modelMapper;
 
     public BookMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
-        //Configurar ModelMapper para usar estrategia de coincidencia estricta
+        // Configurar ModelMapper para usar estrategia estricta
         this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-    }
-
-    public BookDetailsDTO toDetailsDTO(Book book) {
-        BookDetailsDTO bookDetailsDTO =  modelMapper.map(book, BookDetailsDTO.class);
-
-        bookDetailsDTO.setAuthorName(book.getAuthor().getFirstName()+" "+book.getAuthor().getLastName());
-        bookDetailsDTO.setCategoryName(book.getCategory().getName());
-
-        return bookDetailsDTO;
-    }
-
-    public Book toEntity(BookCreateUpdateDTO bookCreateUpdateDTO) {
-        return modelMapper.map(bookCreateUpdateDTO, Book.class);
-    }
-
-    public BookCreateUpdateDTO toCreateUpdateDTO(Book book) {
-        return modelMapper.map(book, BookCreateUpdateDTO.class);
     }
 
     // Mapeo de Book a BookDetailsDTO (para mostrar información completa)
@@ -45,4 +28,13 @@ public class BookMapper {
         return bookDetailsDTO;
     }
 
+    // Mapeo de BookCreateUpdateDTO a Book (para crear/actualizar)
+    public Book toEntity(BookCreateUpdateDTO bookCreateUpdateDTO) {
+        return modelMapper.map(bookCreateUpdateDTO, Book.class);
+    }
+
+    // Mapeo de Book a BookCreateUpdateDTO (para casos donde necesites regresar el DTO de creación/actualización)
+    public BookCreateUpdateDTO toCreateUpdateDto(Book book) {
+        return modelMapper.map(book, BookCreateUpdateDTO.class);
+    }
 }

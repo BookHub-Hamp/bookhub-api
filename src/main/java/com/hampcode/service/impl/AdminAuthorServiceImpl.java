@@ -15,10 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class AdminAuthorServiceImpl implements AdminAuthorService {
+
     private final AuthorRepository authorRepository;
     private final AuthorMapper authorMapper;
 
@@ -27,7 +30,7 @@ public class AdminAuthorServiceImpl implements AdminAuthorService {
     public List<AuthorDTO> getAll() {
         List<Author> authors = authorRepository.findAll();
         return authors.stream()
-                .map(authorMapper::toDTO)
+                .map(authorMapper::toDto)
                 .toList();
     }
 
@@ -35,30 +38,35 @@ public class AdminAuthorServiceImpl implements AdminAuthorService {
     @Override
     public Page<AuthorDTO> paginate(Pageable pageable) {
         Page<Author> authors = authorRepository.findAll(pageable);
-        return authors.map(authorMapper::toDTO);
+        return authors.map(authorMapper::toDto);
     }
-
 
     @Transactional(readOnly = true)
     @Override
     public AuthorDTO findById(Integer id) {
-       Author author = authorRepository.findById(id)
-               .orElseThrow(()-> new ResourceNotFoundException("El autor con ID "+id+" no fue encontrado"));
-       return authorMapper.toDTO(author);
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("El autor con ID " + id + " no fue encontrado"));
+        return authorMapper.toDto(author);
     }
 
     @Transactional
     @Override
     public AuthorDTO create(AuthorDTO authorDTO) {
+        /*Optional<Author> existingAuthor = authorRepository.findByFirstNameAndLastName(authorDTO.getFirstName(), authorDTO.getLastName());
+
+        if (existingAuthor.isPresent()) {
+            throw new BadRequestException("El autor ya existe con el mismo nombre y apellido");
+        }*/
+
         authorRepository.findByFirstNameAndLastName(authorDTO.getFirstName(), authorDTO.getLastName())
-                        .ifPresent(existingAuthor ->{
-                            throw new BadRequestException("El autor ya existe con el mismo nombre y apellido");
-                        });
+                .ifPresent(existingAuthor -> {
+                    throw new BadRequestException("El autor ya existe con el mismo nombre y apellido");
+                });
 
         Author author = authorMapper.toEntity(authorDTO);
         author.setCreatedAt(LocalDateTime.now());
         author = authorRepository.save(author);
-        return authorMapper.toDTO(author);
+        return authorMapper.toDto(author);
     }
 
     @Transactional
@@ -67,7 +75,15 @@ public class AdminAuthorServiceImpl implements AdminAuthorService {
         Author authorFromDb = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("El autor con ID " + id + " no fue encontrado"));
 
+        // Verificar si ya existe otro autor con el mismo nombre y apellido
+        /*Optional<Author> existingAuthor = authorRepository.findByFirstNameAndLastName(updateAuthorDTO.getFirstName(), updateAuthorDTO.getLastName());
 
+        if (existingAuthor.isPresent() && !existingAuthor.get().getId().equals(id)) {
+            throw new BadRequestException("Ya existe un autor con el mismo nombre y apellido");
+        }*/
+
+        // Verificar si ya existe otro autor con el mismo nombre y apellido
+        // Excluye al autor actual verificando que el ID sea diferente, para evitar tratar al mismo autor como duplicado
         authorRepository.findByFirstNameAndLastName(updateAuthorDTO.getFirstName(), updateAuthorDTO.getLastName())
                 .filter(existingAuthor -> !existingAuthor.getId().equals(id))
                 .ifPresent(existingAuthor -> {
@@ -81,7 +97,7 @@ public class AdminAuthorServiceImpl implements AdminAuthorService {
         authorFromDb.setUpdatedAt(LocalDateTime.now());
 
         authorFromDb = authorRepository.save(authorFromDb);
-        return authorMapper.toDTO(authorFromDb);
+        return authorMapper.toDto(authorFromDb);
     }
 
     @Transactional

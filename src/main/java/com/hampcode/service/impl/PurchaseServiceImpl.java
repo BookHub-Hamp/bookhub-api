@@ -1,13 +1,13 @@
 package com.hampcode.service.impl;
 
-import com.hampcode.dto.PurchaseCreateDTO;
+import com.hampcode.dto.PurchaseCreateUpdateDTO;
 import com.hampcode.dto.PurchaseDTO;
 import com.hampcode.dto.PurchaseReportDTO;
 import com.hampcode.exception.ResourceNotFoundException;
 import com.hampcode.mapper.PurchaseMapper;
 import com.hampcode.model.entity.Book;
 import com.hampcode.model.entity.Purchase;
-import com.hampcode.model.entity.PurchaseItem;
+import com.hampcode.model.entity.Customer;
 import com.hampcode.model.entity.User;
 import com.hampcode.model.enums.PaymentStatus;
 import com.hampcode.repository.BookRepository;
@@ -33,20 +33,15 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final BookRepository bookRepository;
     private final PurchaseMapper purchaseMapper;
 
-
     @Override
     @Transactional
-    public PurchaseDTO createPurchase(PurchaseCreateDTO purchaseCreateDTO) {
-        //Convertir PurchaseCreateDTO a Purchase
-        Purchase purchase = purchaseMapper.toPurchaseCreateDTO(purchaseCreateDTO);
+    public PurchaseDTO createPurchase(PurchaseCreateUpdateDTO purchaseDTO) {
+        // Convertir el DTO en una entidad Purchase
+        Purchase purchase = purchaseMapper.toPurchaseEntity(purchaseDTO);
 
-        /*User customer = userRepository.findById(purchaseCreateDTO.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));*/
-
-        // Buscar el usuario (antes 'customer')
-       /* User user = userRepository.findById(purchaseCreateDTO.getCustomerId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));*/
-
+        // Verificar si el cliente existe en la base de datos
+        /*User user = userRepository.findById(purchaseDTO.getCustomerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with ID: " + purchaseDTO.getCustomerId()));*/
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = null;
 
@@ -55,40 +50,51 @@ public class PurchaseServiceImpl implements PurchaseService {
                     .orElseThrow(ResourceNotFoundException::new);
         }
 
-        purchase.getItems().forEach(item->{
+
+        purchase.setUser(user); // Asociar el cliente a la compra
+
+        // Verificar si los libros existen en la base de datos antes de proceder
+        purchase.getItems().forEach(item -> {
             Book book = bookRepository.findById(item.getBook().getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
-            item.setBook(book);//Asignar el libro al item
-            item.setPurchase(purchase);//Asignar la compra al item
+                    .orElseThrow(() -> new RuntimeException("Book not found with ID: " + item.getBook().getId()));
+            item.setBook(book); // Asociar el libro existente al PurchaseItem
+            item.setPurchase(purchase); // Asociar el PurchaseItem a la compra actual
         });
 
+        // Establecer la fecha de creación y estado de pago
+        purchase.setCreatedAt(LocalDateTime.now());
+        purchase.setPaymentStatus(PaymentStatus.PENDING);
+
+        // Calcular el total basado en la cantidad de libros comprados
         Float total = purchase.getItems()
                 .stream()
                 .map(item -> item.getPrice() * item.getQuantity())
                 .reduce(0f, Float::sum);
 
-        purchase.setCreatedAt(LocalDateTime.now());
-        purchase.setPaymentStatus(PaymentStatus.PENDING);
-        //purchase.setCustomer(customer);
-        purchase.setUser(user);  // Cambiado a 'user'
         purchase.setTotal(total);
-        purchase.getItems().forEach(item -> item.setPurchase(purchase));
 
+        // Guardar la compra
+        Purchase savedPurchase = purchaseRepository.save(purchase);
 
-
-
-        Purchase savePurchase = purchaseRepository.save(purchase);
-
-        return purchaseMapper.toPurchaseDTO(savePurchase);
+        // Retornar el DTO mapeado
+        return purchaseMapper.toPurchaseDTO(savedPurchase);
     }
+
+
+  /* @Override
+    @Transactional(readOnly = true)
+    public List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId) {
+        return purchaseRepository.findByUserId(userId)
+                .stream()
+                .map(purchaseMapper::toPurchaseDTO)
+                .collect(Collectors.toList());
+    }*/
+
 
     @Override
     @Transactional(readOnly = true)
-    //public List<PurchaseDTO> getPurchaseHistoryByUserId(Integer userId) {
     public List<PurchaseDTO> getPurchaseHistoryByUserId() {
-        /*return purchaseRepository.findByCustomerId(userId).stream()
-                .map(purchaseMapper::toPurchaseDTO)
-                .toList();*/
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = null;
@@ -103,53 +109,57 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     @Override
+    @Transactional(readOnly = true)
     public List<PurchaseReportDTO> getPurchaseReportByDate() {
         List<Object[]> results = purchaseRepository.getPurchaseReportByDate();
-        //Mapeo de la lista de objetos a una lista de PurchaseReportDTO
-        List<PurchaseReportDTO> purchaseReportDTOS = results.stream()
-                .map(result ->
-                        new PurchaseReportDTO (
-                                ((Integer)result[0]).intValue(),
-                                (String)result[1]
-                        )
-                ).toList();
-        return purchaseReportDTOS;
+
+        // Mapea cada Object[] a un PurchaseReportDTO
+        return results.stream().map(result ->
+                new PurchaseReportDTO(
+                        ((Integer) result[0]).intValue(),  // Cast de la cantidad
+                        (String) result[1]                // Cast de la fecha
+                )
+        ).collect(Collectors.toList());
     }
 
+    /////
 
     @Override
-    public List<Purchase> getAllPurchases() {
-        return purchaseRepository.findAll();
+    public List<PurchaseDTO> getAllPurchases() {
+        return purchaseRepository.findAll()
+                .stream()
+                .map(purchaseMapper::toPurchaseDTO)
+                .collect(Collectors.toList());
     }
-
-
 
     @Override
-    public Purchase getPurchaseById(Integer id) {
-        return purchaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Purchase not found"));
+     public PurchaseDTO getPurchaseById(Integer id) {
+        Purchase purchase = purchaseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Purchase not found"));
+        return purchaseMapper.toPurchaseDTO(purchase);  // Retornar el DTO en lugar de la entidad
     }
-
 
 
     @Override
     @Transactional
-    public Purchase confirmPurchase(Integer purchaseId) {
-        Purchase purchase = getPurchaseById(purchaseId);
+    public PurchaseDTO confirmPurchase(Integer purchaseId) {
+        // Obtener la entidad Purchase directamente desde el repositorio
+        Purchase purchase = purchaseRepository.findById(purchaseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Purchase not found"));
 
-        // Confirmar la compra y calcular el total usando Stream API y lambda
-        Float total = purchase.getItems()
+        // Confirmar la compra y calcular el total
+       /* Float total = purchase.getItems()
                 .stream()
                 .map(item -> item.getPrice() * item.getQuantity())
                 .reduce(0f, Float::sum);
 
-        purchase.setTotal(total);
+        purchase.setTotal(total);*/
+        purchase.setPaymentStatus(PaymentStatus.PAID);
 
-        // Actualizar el estado de pago a confirmado (se podría cambiar a PAID en el futuro)
-        purchase.setPaymentStatus(PaymentStatus.PENDING); // Dejar en PENDING hasta confirmar con PayPal
-
-        return purchaseRepository.save(purchase);
+        // Guardar y retornar el DTO actualizado
+        Purchase updatedPurchase = purchaseRepository.save(purchase);
+        return purchaseMapper.toPurchaseDTO(updatedPurchase);
     }
+
 }

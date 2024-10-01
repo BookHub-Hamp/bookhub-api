@@ -22,8 +22,8 @@ public class Purchase {
     private PaymentStatus paymentStatus;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "FK_purchase_user"))
+    @JoinColumn(name = "user_id", referencedColumnName = "id"
+            , foreignKey = @ForeignKey(name = "FK_purchase_user"))
     private User user;
 
     @OneToMany(mappedBy = "purchase", cascade = CascadeType.ALL)

@@ -4,8 +4,6 @@ import com.hampcode.dto.AuthResponseDTO;
 import com.hampcode.dto.LoginDTO;
 import com.hampcode.dto.UserProfileDTO;
 import com.hampcode.dto.UserRegistrationDTO;
-import com.hampcode.exception.BadRequestException;
-import com.hampcode.exception.InvalidCredentialsException;
 import com.hampcode.exception.ResourceNotFoundException;
 import com.hampcode.exception.RoleNotFoundException;
 import com.hampcode.mapper.UserMapper;
@@ -19,25 +17,21 @@ import com.hampcode.repository.CustomerRepository;
 import com.hampcode.repository.RoleRepository;
 import com.hampcode.repository.UserRepository;
 import com.hampcode.security.TokenProvider;
+import com.hampcode.security.UserPrincipal;
 import com.hampcode.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final AuthorRepository authorRepository;
@@ -45,8 +39,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    private final AuthenticationManager authenticationManager; // Necesario para la autenticación
-    private final TokenProvider tokenProvider; // Necesario para la creación de tokens JWT
+
+    private final AuthenticationManager authenticationManager;
+    private final TokenProvider tokenProvider;
 
     @Transactional
     @Override
@@ -60,138 +55,118 @@ public class UserServiceImpl implements UserService {
         return registerUserWithRole(registrationDTO, ERole.AUTHOR);
     }
 
-    @Transactional
     @Override
     public AuthResponseDTO login(LoginDTO loginDTO) {
-        // Buscar el usuario por email
-        User user = userRepository.findByEmail(loginDTO.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + loginDTO.getEmail()));
-
-        // Verificar si la contraseña es correcta
-        if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Credenciales incorrectas");
-        }
-
-        // Autenticar al usuario
+        //Autenticar al usuario utilizando AuthenticationManager
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
         );
 
-        // Generar el token JWT usando el TokenProvider
-        String token = tokenProvider.createAccessToken(authentication);
+        //Una vez autenticado, el objeto authentication contiene la información del usuario autenticado
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        User user = userPrincipal.getUser();
 
-        // Generar la respuesta de autenticación, con el rol correspondiente
-        AuthResponseDTO response = userMapper.toAuthResponseDTO(user, token);
+        // Verificar si es un administrador
+        boolean isAdmin = user.getRole().getName().equals(ERole.ADMIN);
 
-        // Retornar la respuesta
-        return response;
-    }
+        String token=tokenProvider.createAccessToken(authentication);
 
+        AuthResponseDTO responseDTO = userMapper.toAuthResponseDTO(user, token);
 
-    // Método genérico para registrar un usuario con un rol específico
-    private UserProfileDTO registerUserWithRole(UserRegistrationDTO registrationDTO, ERole roleEnum) {
-
-        // Verificar si el email ya está registrado o si ya existe un usuario con el mismo nombre y apellido
-        boolean emailExists = userRepository.existsByEmail(registrationDTO.getEmail());
-        boolean existsAsCustomer = customerRepository.existsByFirstNameAndLastName(registrationDTO.getFirstName(), registrationDTO.getLastName());
-        boolean existsAsAuthor = authorRepository.existsByFirstNameAndLastName(registrationDTO.getFirstName(), registrationDTO.getLastName());
-
-        if (emailExists) {
-            throw new UsernameNotFoundException("El email ya está registrado");
-        }
-
-        if (existsAsCustomer || existsAsAuthor) {
-            throw new BadRequestException("Ya existe un usuario con el mismo nombre y apellido");
-        }
-
-
-        // Asignar el rol del usuario
-        Role role = roleRepository.findByName(roleEnum)
-                .orElseThrow(() -> new RoleNotFoundException("Rol no encontrado"));
-
-        // Cifrar la contraseña
-        registrationDTO.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-
-        // Convertir el DTO a una entidad User
-        User user = userMapper.toUserEntity(registrationDTO);
-        user.setRole(role); // Asignar el rol al usuario
-
-        // Asignar la entidad específica basada en el rol
-        if (roleEnum == ERole.CUSTOMER) {
-            // Crear un cliente
-            Customer customer = new Customer();
-            customer.setFirstName(registrationDTO.getFirstName());
-            customer.setLastName(registrationDTO.getLastName());
-            customer.setShippingAddress(registrationDTO.getShippingAddress());
-            customer.setCreatedAt(LocalDateTime.now());
-            customer.setUser(user);  // Enlazar el cliente con el usuario
-            user.setCustomer(customer);
-        } else if (roleEnum == ERole.AUTHOR) {
-            // Crear un autor
-            Author author = new Author();
-            author.setFirstName(registrationDTO.getFirstName());
-            author.setLastName(registrationDTO.getLastName());
-            author.setBio(registrationDTO.getBio());
-            author.setCreatedAt(LocalDateTime.now());
-            author.setUser(user);  // Enlazar el autor con el usuario
-            user.setAuthor(author);
-        }
-
-        // Guardar el usuario en la base de datos
-        User savedUser = userRepository.save(user);
-
-        // Convertir el usuario registrado a UserProfileDTO para la respuesta
-        return userMapper.toUserProfileDTO(savedUser);
+        return responseDTO;
     }
 
 
     @Transactional
     @Override
     public UserProfileDTO updateUserProfile(Integer id, UserProfileDTO userProfileDTO) {
-        // Buscar el usuario por su ID
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        // Verificar si ya existe un cliente o autor con el mismo nombre y apellido (excepto el usuario actual)
-        // La verificación se realiza excluyendo el usuario actual para permitir que actualice su propio perfil
-        // sin que se genere un conflicto de duplicidad en los nombres y apellidos.
-        boolean existsAsCustomer = customerRepository.existsByFirstNameAndLastNameAndUserIdNot(userProfileDTO.getFirstName(), userProfileDTO.getLastName(), id);
-        boolean existsAsAuthor = authorRepository.existsByFirstNameAndLastNameAndUserIdNot(userProfileDTO.getFirstName(), userProfileDTO.getLastName(), id);
+        //Verificar si ya existe un cliente o autor con el mismo nombre y apellido (excepto el usuario actual)
+        boolean existsAsCustomer = customerRepository.existsByFirstNameAndLastNameAndUserIdNot(
+                userProfileDTO.getFirstName(), userProfileDTO.getLastName(), id);
+        boolean  existsAsAuthor = authorRepository.existsByFirstNameAndLastNameAndUserIdNot(
+                userProfileDTO.getFirstName(), userProfileDTO.getLastName(), id);
+        System.out.println("Author exists: " + existsAsAuthor);
 
-        if (existsAsCustomer || existsAsAuthor) {
-            throw new BadRequestException("Ya existe un usuario con el mismo nombre y apellido");
+        if(existsAsCustomer || existsAsAuthor){
+            throw new IllegalArgumentException("Ya existe un usuario con el mismo nombre y apellido");
         }
 
 
-        // Actualizar los campos específicos del perfil
-        if (user.getCustomer() != null) {
+
+        if(user.getCustomer()!=null){
+
             user.getCustomer().setFirstName(userProfileDTO.getFirstName());
             user.getCustomer().setLastName(userProfileDTO.getLastName());
             user.getCustomer().setShippingAddress(userProfileDTO.getShippingAddress());
         }
 
-        if (user.getAuthor() != null) {
+        if(user.getAuthor()!=null){
             user.getAuthor().setFirstName(userProfileDTO.getFirstName());
             user.getAuthor().setLastName(userProfileDTO.getLastName());
             user.getAuthor().setBio(userProfileDTO.getBio());
         }
 
-        // Guardar los cambios en la base de datos
         User updatedUser = userRepository.save(user);
 
-        // Convertir el usuario actualizado a UserProfileDTO para la respuesta
         return userMapper.toUserProfileDTO(updatedUser);
     }
 
-
-
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public UserProfileDTO getUserProfileById(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-
-        // Convertir a UserProfileDTO para la respuesta
         return userMapper.toUserProfileDTO(user);
+    }
+
+    private UserProfileDTO registerUserWithRole(UserRegistrationDTO registrationDTO, ERole roleEnum) {
+
+        //Verificar si el email ya esta registrado o si ya si existe un usuario con el mismo nombre y apellido
+        boolean existsByEmail = userRepository.existsByEmail(registrationDTO.getEmail());
+        boolean existsAsCustomer = customerRepository.existsByFirstNameAndLastName(registrationDTO.getFirstName(), registrationDTO.getLastName());
+        boolean existsAsAuthor = authorRepository.existsByFirstNameAndLastName(registrationDTO.getFirstName(), registrationDTO.getLastName());
+
+        if(existsByEmail){
+            throw new IllegalArgumentException("El email ya esta registrado");
+        }
+
+        if(existsAsCustomer || existsAsAuthor){
+            throw new IllegalArgumentException("Ya existe un usuario con el mismo nombre y apellido");
+        }
+
+        Role role = roleRepository.findByName(roleEnum)
+                .orElseThrow(() -> new RoleNotFoundException("Error: Role is not found."));
+
+        registrationDTO.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
+
+        User user = userMapper.toUserEntity(registrationDTO);
+        user.setRole(role);
+
+        if(roleEnum == ERole.CUSTOMER){
+            Customer customer = new Customer();
+            customer.setFirstName(registrationDTO.getFirstName());
+            customer.setLastName(registrationDTO.getLastName());
+            customer.setShippingAddress(registrationDTO.getShippingAddress());
+            customer.setCreatedAt(LocalDateTime.now());
+            customer.setUser(user);
+            user.setCustomer(customer);
+        }else if(roleEnum == ERole.AUTHOR){
+                Author author = new Author();
+                author.setFirstName(registrationDTO.getFirstName());
+                author.setLastName(registrationDTO.getLastName());
+                author.setBio(registrationDTO.getBio());
+                author.setCreatedAt(LocalDateTime.now());
+                author.setUser(user);
+                user.setAuthor(author);
+         }
+
+        User savedUser = userRepository.save(user);
+
+        return userMapper.toUserProfileDTO(savedUser);
     }
 }

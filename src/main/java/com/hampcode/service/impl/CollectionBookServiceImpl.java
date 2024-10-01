@@ -1,5 +1,6 @@
 package com.hampcode.service.impl;
 
+import com.hampcode.exception.BadRequestException;
 import com.hampcode.model.entity.Book;
 import com.hampcode.model.entity.Collection;
 import com.hampcode.model.entity.CollectionBook;
@@ -24,7 +25,15 @@ public class CollectionBookServiceImpl implements CollectionBookService {
     @Override
     @Transactional
     public CollectionBook addBookToCollection(Integer bookId, Integer collectionId) {
+        // Verificar si el libro ya está en la colección
+        if (collectionBookRepository.existsByBookAndCollection(bookId, collectionId)) {
+            throw new BadRequestException("Este libro ya está en la colección.");
+        }
+
+        // Establecer la fecha en que se agrega el libro
         LocalDateTime addedDate = LocalDateTime.now();
+
+        // Agregar el libro a la colección
         collectionBookRepository.addBookToCollection(bookId, collectionId, addedDate);
 
         // Crear el objeto para devolver
@@ -35,6 +44,7 @@ public class CollectionBookServiceImpl implements CollectionBookService {
 
         return collectionBook;
     }
+
 
     @Override
     @Transactional

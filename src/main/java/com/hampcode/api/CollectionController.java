@@ -1,6 +1,7 @@
 package com.hampcode.api;
 
-import com.hampcode.model.entity.Collection;
+import com.hampcode.dto.CollectionCreateUpdateDTO;
+import com.hampcode.dto.CollectionDetailsDTO;
 import com.hampcode.service.CollectionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,30 +19,35 @@ public class CollectionController {
 
     private final CollectionService collectionService;
 
+    // Crear una nueva colección
     @PostMapping
-    public ResponseEntity<Collection> createCollection(@RequestBody Collection collection) {
-        Collection savedCollection = collectionService.createCollection(collection);
+    public ResponseEntity<CollectionDetailsDTO> createCollection(@RequestBody CollectionCreateUpdateDTO collectionDTO) {
+        CollectionDetailsDTO savedCollection = collectionService.createCollection(collectionDTO);
         return new ResponseEntity<>(savedCollection, HttpStatus.CREATED);
     }
 
+    // Obtener colecciones por usuario
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Collection>> getCollectionsByUser(@PathVariable Integer userId) {
-        List<Collection> collections = collectionService.getCollectionsByUser(userId);
+    public ResponseEntity<List<CollectionDetailsDTO>> getCollectionsByUser(@PathVariable Integer userId) {
+        List<CollectionDetailsDTO> collections = collectionService.getCollectionsByUser(userId);
         return ResponseEntity.ok(collections);
     }
 
+    // Obtener una colección por ID
     @GetMapping("/{collectionId}")
-    public ResponseEntity<Collection> getCollectionById(@PathVariable Integer collectionId) {
-        Collection collection = collectionService.getCollectionById(collectionId);
+    public ResponseEntity<CollectionDetailsDTO> getCollectionById(@PathVariable Integer collectionId) {
+        CollectionDetailsDTO collection = collectionService.getCollectionById(collectionId);
         return ResponseEntity.ok(collection);
     }
 
+    // Actualizar una colección existente
     @PutMapping("/{collectionId}")
-    public ResponseEntity<Collection> updateCollection(@PathVariable Integer collectionId, @RequestBody Collection collection) {
-        Collection updatedCollection = collectionService.updateCollection(collectionId, collection);
+    public ResponseEntity<CollectionDetailsDTO> updateCollection(@PathVariable Integer collectionId, @RequestBody CollectionCreateUpdateDTO collectionDTO) {
+        CollectionDetailsDTO updatedCollection = collectionService.updateCollection(collectionId, collectionDTO);
         return ResponseEntity.ok(updatedCollection);
     }
 
+    // Eliminar una colección
     @DeleteMapping("/{collectionId}")
     public ResponseEntity<Void> deleteCollection(@PathVariable Integer collectionId) {
         collectionService.deleteCollection(collectionId);

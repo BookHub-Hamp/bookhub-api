@@ -8,6 +8,7 @@ import lombok.Data;
 
 @Data
 public class BookCreateUpdateDTO {
+
     private Integer id;
 
     @NotBlank(message = "El título es obligatorio")
@@ -26,6 +27,7 @@ public class BookCreateUpdateDTO {
     private Float price;
 
     private String coverPath;
+
     private String filePath;
 
     @NotNull(message = "La categoría es obligatoria")

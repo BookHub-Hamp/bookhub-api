@@ -1,9 +1,8 @@
 package com.hampcode.api;
 
-import com.hampcode.dto.PurchaseCreateDTO;
+import com.hampcode.dto.PurchaseCreateUpdateDTO;
 import com.hampcode.dto.PurchaseDTO;
 import com.hampcode.dto.PurchaseReportDTO;
-import com.hampcode.model.entity.Purchase;
 import com.hampcode.service.PurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,15 +21,14 @@ public class PurchaseController {
     private final PurchaseService purchaseService;
 
     @GetMapping
-    public ResponseEntity<List<Purchase>> listAllPurchases() {
-        List<Purchase> purchases = purchaseService.getAllPurchases();
+    public ResponseEntity<List<PurchaseDTO>> listAllPurchases() {
+        List<PurchaseDTO> purchases = purchaseService.getAllPurchases();
         return ResponseEntity.ok(purchases);
     }
 
-
     @PostMapping
-    public ResponseEntity<PurchaseDTO> createPurchase(@RequestBody PurchaseCreateDTO purchaseCreateDTO) {
-        PurchaseDTO savedPurchase = purchaseService.createPurchase(purchaseCreateDTO);
+    public ResponseEntity<PurchaseDTO> createPurchase(@RequestBody PurchaseCreateUpdateDTO purchaseDTO) {
+        PurchaseDTO savedPurchase = purchaseService.createPurchase(purchaseDTO);
         return new ResponseEntity<>(savedPurchase, HttpStatus.CREATED);
     }
 
@@ -42,22 +40,25 @@ public class PurchaseController {
         return ResponseEntity.ok(purchaseHistory);
     }
 
+
+
     @GetMapping("/report")
-    public ResponseEntity<List<PurchaseReportDTO>> getPurchaseReport(){
-        List<PurchaseReportDTO> reports = purchaseService.getPurchaseReportByDate();
-        return ResponseEntity.ok(reports);
+    public ResponseEntity<List<PurchaseReportDTO>> getPurchaseReport() {
+        List<PurchaseReportDTO> report = purchaseService.getPurchaseReportByDate();
+        return ResponseEntity.ok(report);
     }
 
+    /////////
     @GetMapping("/{id}")
-    public ResponseEntity<Purchase> getPurchaseById(@PathVariable Integer id) {
-        Purchase purchase = purchaseService.getPurchaseById(id);
+    public ResponseEntity<PurchaseDTO> getPurchaseById(@PathVariable Integer id) {
+        PurchaseDTO purchase = purchaseService.getPurchaseById(id);
         return ResponseEntity.ok(purchase);
     }
 
     // Endpoint para confirmar la compra (calcular total)
     @PutMapping("/confirm/{id}")
-    public ResponseEntity<Purchase> confirmPurchase(@PathVariable Integer id) {
-        Purchase confirmedPurchase = purchaseService.confirmPurchase(id);
+    public ResponseEntity<PurchaseDTO> confirmPurchase(@PathVariable Integer id) {
+        PurchaseDTO confirmedPurchase = purchaseService.confirmPurchase(id);
         return ResponseEntity.ok(confirmedPurchase);
     }
 }

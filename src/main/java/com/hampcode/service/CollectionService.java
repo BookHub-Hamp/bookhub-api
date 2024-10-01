@@ -1,13 +1,14 @@
 package com.hampcode.service;
 
-import com.hampcode.model.entity.Collection;
+import com.hampcode.dto.CollectionCreateUpdateDTO;
+import com.hampcode.dto.CollectionDetailsDTO;
 
 import java.util.List;
 
 public interface CollectionService {
-    Collection createCollection(Collection collection);
-    List<Collection> getCollectionsByUser(Integer userId);
-    Collection getCollectionById(Integer collectionId);
-    Collection updateCollection(Integer collectionId, Collection collection);
+    CollectionDetailsDTO createCollection(CollectionCreateUpdateDTO collectionDTO);
+    List<CollectionDetailsDTO> getCollectionsByUser(Integer userId);
+    CollectionDetailsDTO getCollectionById(Integer collectionId);
+    CollectionDetailsDTO updateCollection(Integer collectionId, CollectionCreateUpdateDTO collectionDTO);
     void deleteCollection(Integer collectionId);
 }

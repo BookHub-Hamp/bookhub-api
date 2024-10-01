@@ -1,6 +1,5 @@
 package com.hampcode.service.impl;
 
-
 import com.hampcode.dto.BookCreateUpdateDTO;
 import com.hampcode.dto.BookDetailsDTO;
 import com.hampcode.exception.BadRequestException;
@@ -21,10 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class AdminBookServiceImpl implements AdminBookService {
+
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
     private final AuthorRepository authorRepository;
@@ -33,95 +34,92 @@ public class AdminBookServiceImpl implements AdminBookService {
     @Transactional(readOnly = true)
     @Override
     public List<BookDetailsDTO> findAll() {
-        List<Book> books= bookRepository.findAll();
-        return books.stream()
-                .map(bookMapper::toDetailsDTO)
-                .toList();
+        return bookRepository.findAll()
+                .stream()
+                .map(bookMapper::toDetailsDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     @Override
     public Page<BookDetailsDTO> paginate(Pageable pageable) {
         return bookRepository.findAll(pageable)
-                .map(bookMapper::toDetailsDTO);
+                .map(bookMapper::toDetailsDto);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public BookDetailsDTO findById(Integer id) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+        return bookMapper.toDetailsDto(book);
     }
 
     @Transactional
     @Override
     public BookDetailsDTO create(BookCreateUpdateDTO bookCreateUpdateDTO) {
         bookRepository.findByTitleOrSlug(bookCreateUpdateDTO.getTitle(), bookCreateUpdateDTO.getSlug())
-                .ifPresent(book -> {
-                    throw new BadRequestException("Ya existe un libro con el mismo titulo o slug");
+                .ifPresent(existingBook -> {
+                    throw new BadRequestException("Ya existe un libro con el mismo título o slug");
                 });
 
-        // Asigna la categoría y el autor antes de guardar
         Category category = categoryRepository.findById(bookCreateUpdateDTO.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + bookCreateUpdateDTO.getCategoryId()));
         Author author = authorRepository.findById(bookCreateUpdateDTO.getAuthorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + bookCreateUpdateDTO.getAuthorId()));
 
         Book book = bookMapper.toEntity(bookCreateUpdateDTO);
-
         book.setCategory(category);
         book.setAuthor(author);
         book.setCreatedAt(LocalDateTime.now());
 
-        return bookMapper.toDetailsDTO(bookRepository.save(book));
+        return bookMapper.toDetailsDto(bookRepository.save(book));
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public BookDetailsDTO findById(Integer id) {
-        Book book = bookRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
-        return bookMapper.toDetailsDTO(book);
-    }
 
     @Transactional
     @Override
-    public BookDetailsDTO update(Integer id, BookCreateUpdateDTO updatedBook) {
-        Book bookFromDb = bookRepository.findById(id).
-                orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
+    public BookDetailsDTO update(Integer id, BookCreateUpdateDTO updatedBookDTO) {
+        Book bookFromDb = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Libro no encontrado con el ID: " + id));
 
-        bookRepository.findByTitleOrSlug(updatedBook.getTitle(), updatedBook.getSlug())
-                .ifPresent(book -> {
-                    throw new BadRequestException("Ya existe un libro con el mismo titulo o slug");
+        bookRepository.findByTitleOrSlug(updatedBookDTO.getTitle(), updatedBookDTO.getSlug())
+                .filter(existingBook -> !existingBook.getId().equals(id))
+                .ifPresent(existingBook -> {
+                    throw new BadRequestException("Ya existe un libro con el mismo título o slug");
                 });
 
-        // Asigna la categoría y el autor antes de actualizar
-        Category category = categoryRepository.findById(updatedBook.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + updatedBook.getCategoryId()));
-        Author author = authorRepository.findById(updatedBook.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("Author not found with id: " + updatedBook.getAuthorId()));
+        Category category = categoryRepository.findById(updatedBookDTO.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + updatedBookDTO.getCategoryId()));
+        Author author = authorRepository.findById(updatedBookDTO.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + updatedBookDTO.getAuthorId()));
 
-        // Actualización de los campos del libro
-        //book = bookMapper.toEntity(updatedBook);
-
-        bookFromDb.setTitle(updatedBook.getTitle());
-        bookFromDb.setDescription(updatedBook.getDescription());
-        bookFromDb.setPrice(updatedBook.getPrice());
-        bookFromDb.setSlug(updatedBook.getSlug());
-        bookFromDb.setCoverPath(updatedBook.getCoverPath());
-        bookFromDb.setFilePath(updatedBook.getFilePath());
+        // Actualizar los campos del libro
+        bookFromDb.setTitle(updatedBookDTO.getTitle());
+        bookFromDb.setDescription(updatedBookDTO.getDescription());
+        bookFromDb.setPrice(updatedBookDTO.getPrice());
+        bookFromDb.setSlug(updatedBookDTO.getSlug());
+        bookFromDb.setCoverPath(updatedBookDTO.getCoverPath());
+        bookFromDb.setFilePath(updatedBookDTO.getFilePath());
         bookFromDb.setCategory(category);
         bookFromDb.setAuthor(author);
         bookFromDb.setUpdatedAt(LocalDateTime.now());
 
-        return bookMapper.toDetailsDTO(bookRepository.save(bookFromDb));
+        return bookMapper.toDetailsDto(bookRepository.save(bookFromDb));
     }
 
     @Transactional
     @Override
     public void delete(Integer id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
         bookRepository.delete(book);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<BookDetailsDTO> findTop6BooksByCreatedAt() {
-        return bookRepository.findTop6ByOrderByCreatedAtDesc().stream()
+        return bookRepository.findTop6ByOrderByCreatedAtDesc()
+                .stream()
                 .map(bookMapper::toDetailsDto)
                 .toList();
     }

@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class AuthorDTO {
+
     private Integer id;
 
     @NotBlank(message = "El nombre es obligatorio")
@@ -16,7 +17,7 @@ public class AuthorDTO {
     @Size(max = 50, message = "El apellido debe tener 50 caracteres o menos")
     private String lastName;
 
-    @NotBlank(message = "El biografia es obligatorio")
-    @Size(max = 500, message = "La biografia debe tener 500 caracteres o menos")
+    @NotBlank(message = "La biografia es obligatorio")
+    @Size(max = 500, message = "La biografía debe tener 500 caracteres o menos")
     private String bio;
 }

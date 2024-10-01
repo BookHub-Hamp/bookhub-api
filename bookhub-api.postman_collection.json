@@ -12,6 +12,16 @@
 				{
 					"name": "Crear una nueva categoría",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzI5Nzk0ODg2fQ.B8ahPXALrFi43ZGM05GqyL11NX28_qiIKAVE65bIN7BszgLV_Y99efpDoymRTRD4e9uYlrYB2Q8VxBZVWPus1A",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -44,7 +54,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoZW5yeS5tZW5kb3phcEBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX1VTRVIiLCJmaXJzdE5hbWUiOiJIZW5yeSIsImxhc3ROYW1lIjoiTWVuZG96YSBQdWVydGEiLCJleHAiOjE3MjkwNDU5OTV9.upXO04lUmViteQEfK8tRcxpFaebE6iX8z1esmK5klJrhPOzrrt7N55OUu0zsDeJ8Lt9j1iY0dtTP7I16Z_cKww",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzI5Nzk0ODg2fQ.B8ahPXALrFi43ZGM05GqyL11NX28_qiIKAVE65bIN7BszgLV_Y99efpDoymRTRD4e9uYlrYB2Q8VxBZVWPus1A",
 									"type": "string"
 								}
 							]
@@ -516,7 +526,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJST0xFX0FETUlOIiwiZXhwIjoxNzI5NjQxOTIwfQ.Pl1WtdReYnkq4aiOaO37UbLSAs3DpW7s_MGOIu6cv47WFRHVpcctVjub0g7JJOkrvrMPHkuwYAGh9I-t3Ts3mA",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoZW5yeS5tZW5kb3phQGV4YW1wbGUuY29tIiwicm9sZSI6IlJPTEVfQ1VTVE9NRVIiLCJleHAiOjE3MzAzMjM4NjF9.k4pYfANKQdk28yEoRiGBZFDKDNC2R7JF6L60k8EjwoGzZGUS5VFxEjl2E4MPdx79t022kzlmHYu2k-T6cIp8Qg",
 									"type": "string"
 								}
 							]
@@ -525,7 +535,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n   \r\n    \"items\": [\r\n        {\r\n            \"price\": 50.0,\r\n            \"quantity\": 2,\r\n            \"bookId\": 1  \r\n        },\r\n        {\r\n            \"price\": 30.0,\r\n            \"quantity\": 1,\r\n            \"bookId\": 2 \r\n        }\r\n    ]\r\n}\r\n",
+							"raw": "{\r\n    \"items\": [\r\n        {\r\n            \"price\": 50.0,\r\n            \"quantity\": 2,\r\n            \"bookId\": 7  \r\n        },\r\n        {\r\n            \"price\": 30.0,\r\n            \"quantity\": 1,\r\n            \"bookId\": 5 \r\n        },\r\n        {\r\n            \"price\": 40.0,\r\n            \"quantity\": 3,\r\n            \"bookId\": 6 \r\n        }\r\n    ]\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -796,7 +806,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Jorge\",\r\n    \"lastName\": \"Perez Mendoza\",\r\n    \"email\": \"jorgemendoza.perez@example.com\",\r\n    \"password\": \"password123\",\r\n    \"shippingAddress\": \"123 Calle Falsa\"\r\n}\r\n",
+							"raw": "{\r\n    \"firstName\": \"Admin\",\r\n    \"lastName\": \"Admin\",\r\n    \"email\": \"admin@example.com\",\r\n    \"password\": \"password123\",\r\n    \"shippingAddress\": \"123 Calle Falsa\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -824,7 +834,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"jorge.perez@example.com\",\r\n  \"password\": \"password123\"\r\n}\r\n",
+							"raw": "{\r\n  \"email\": \"henry.mendoza@example.com\",\r\n  \"password\": \"password123\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -859,15 +869,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/auth/register/author",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"auth",
-								"register",
-								"author"
-							]
+							"raw": ""
 						}
 					},
 					"response": []
@@ -1024,7 +1026,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Jorge\",\r\n    \"lastName\": \"Lopez\",\r\n    \"shippingAddress\": \"456 Nueva Direccion\"\r\n}\r\n",
+							"raw": "{\r\n    \"firstName\": \"Jorge\",\r\n    \"lastName\": \"Lopez\",\r\n    \"bio\": \"456 Nueva Direccion\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1040,6 +1042,89 @@
 								"user",
 								"profile",
 								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payment",
+			"item": [
+				{
+					"name": "Crear una orden de PayPal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoZW5yeS5tZW5kb3phQGV4YW1wbGUuY29tIiwicm9sZSI6IlJPTEVfQ1VTVE9NRVIiLCJleHAiOjE3MzAzMjM4NjF9.k4pYfANKQdk28yEoRiGBZFDKDNC2R7JF6L60k8EjwoGzZGUS5VFxEjl2E4MPdx79t022kzlmHYu2k-T6cIp8Qg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/checkout/paypal/create?purchaseId=1&returnUrl=https://google.com&cancelUrl=https://google.com",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checkout",
+								"paypal",
+								"create"
+							],
+							"query": [
+								{
+									"key": "purchaseId",
+									"value": "1"
+								},
+								{
+									"key": "returnUrl",
+									"value": "https://google.com"
+								},
+								{
+									"key": "cancelUrl",
+									"value": "https://google.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Capturar una orden de PayPal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoZW5yeS5tZW5kb3phQGV4YW1wbGUuY29tIiwicm9sZSI6IlJPTEVfQ1VTVE9NRVIiLCJleHAiOjE3MzAzMjM4NjF9.k4pYfANKQdk28yEoRiGBZFDKDNC2R7JF6L60k8EjwoGzZGUS5VFxEjl2E4MPdx79t022kzlmHYu2k-T6cIp8Qg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/checkout/paypal/capture?orderId=51832624H8953684N",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"checkout",
+								"paypal",
+								"capture"
+							],
+							"query": [
+								{
+									"key": "orderId",
+									"value": "51832624H8953684N"
+								}
 							]
 						}
 					},

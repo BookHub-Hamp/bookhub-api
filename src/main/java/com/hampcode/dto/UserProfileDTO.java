@@ -8,13 +8,10 @@ public class UserProfileDTO {
 
     private Integer id;
     private String email;
-    private ERole role;  // El rol puede ser CUSTOMER o AUTHOR
+    private ERole role; // El rol puede ser CUSTOMER o AUTHOR
+    private String firstName;
+    private String lastName;
 
-    // Campos específicos para Customer
-    private String firstName;  // Nombre del cliente o autor
-    private String lastName;   // Apellido del cliente o autor
-    private String shippingAddress;  // Solo para el cliente (Customer)
-
-    // Campos específicos para Author
-    private String bio;  // Solo para el autor (Author)
+    private String shippingAddress;
+    private String bio;
 }

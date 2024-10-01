@@ -31,5 +31,7 @@ public interface CollectionBookRepository extends JpaRepository<CollectionBook, 
     @Query("SELECT cb.book FROM CollectionBook cb WHERE cb.collection = :collection")
     List<Book> findBooksByCollection(@Param("collection") Collection collection);
 
+    @Query(value = "SELECT COUNT(*) > 0 FROM collection_books WHERE book_id = :bookId AND collection_id = :collectionId", nativeQuery = true)
+    boolean existsByBookAndCollection(@Param("bookId") Integer bookId, @Param("collectionId") Integer collectionId);
 
 }

@@ -6,7 +6,6 @@ import lombok.Data;
 
 @Data
 public class LoginDTO {
-
     @Email(message = "El correo electrónico no es válido")
     @NotBlank(message = "El correo electrónico es obligatorio")
     private String email;

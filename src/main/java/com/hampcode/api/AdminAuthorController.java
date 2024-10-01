@@ -1,7 +1,6 @@
 package com.hampcode.api;
 
 import com.hampcode.dto.AuthorDTO;
-import com.hampcode.model.entity.Author;
 import com.hampcode.service.AdminAuthorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +29,7 @@ public class AdminAuthorController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<AuthorDTO>> paginate(@PageableDefault(size = 5, sort = "firstName")
-                                                     Pageable pageable) {
+    public ResponseEntity<Page<AuthorDTO>> paginate(@PageableDefault(size = 5, sort = "firstName") Pageable pageable) {
         Page<AuthorDTO> page = adminAuthorService.paginate(pageable);
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
@@ -49,7 +47,7 @@ public class AdminAuthorController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<AuthorDTO> update(@PathVariable Integer id,@Valid @RequestBody AuthorDTO authorDTO) {
+    public ResponseEntity<AuthorDTO> update(@PathVariable Integer id, @Valid @RequestBody AuthorDTO authorDTO) {
         AuthorDTO updatedAuthor = adminAuthorService.update(id, authorDTO);
         return new ResponseEntity<>(updatedAuthor, HttpStatus.OK);
     }

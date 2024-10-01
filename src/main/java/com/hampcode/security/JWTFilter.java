@@ -21,26 +21,25 @@ public class JWTFilter extends GenericFilterBean {
     private final TokenProvider tokenProvider;
 
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
-        // Extraer el token JWT de la cabecera de autorización
+        // TODO: Extraer el token JWT de la cabecera de autorización HTTP (Authorization Header)
         String bearerToken = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
 
-        // Verificar que el token no esté vacío y comience con "Bearer "
+        // TODO: Verificar si el token no es nulo/vacío y si empieza con el prefijo "Bearer "
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            // Eliminar el prefijo "Bearer " para obtener solo el token
             String token = bearerToken.substring(7);
 
-            // Obtener la autenticación a partir del token
+            // TODO: Utilizar el TokenProvider para obtener la autenticación a partir del token JWT
             Authentication authentication = tokenProvider.getAuthentication(token);
 
-            // Establecer la autenticación en el contexto de seguridad
+            // TODO: Establecer la autenticación en el contexto de seguridad de Spring para la solicitud actual
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
-        // Continuar con el siguiente filtro en la cadena
+        // TODO: Continuar con la cadena de filtros, permitiendo que la solicitud siga su curso
         chain.doFilter(request, response);
     }
 }

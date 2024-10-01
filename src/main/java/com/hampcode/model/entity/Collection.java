@@ -1,10 +1,8 @@
 package com.hampcode.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 @Entity
@@ -27,9 +25,9 @@ public class Collection {
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_collection_users"))
-    private User customer;
+    private Customer customer;
 
-    @JsonIgnore
+    /*@JsonIgnore
     @OneToMany(mappedBy = "collection", cascade = CascadeType.ALL)
-    private List<CollectionBook> collectionBooks;
+    private List<CollectionBook> collectionBooks;*/
 }

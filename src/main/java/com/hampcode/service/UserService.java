@@ -7,19 +7,18 @@ import com.hampcode.dto.UserRegistrationDTO;
 
 public interface UserService {
 
-    // Registrar un cliente
-    UserProfileDTO registerCustomer(UserRegistrationDTO registrationDTO);
+        // Register a customer
+        UserProfileDTO registerCustomer(UserRegistrationDTO registrationDTO);
 
-    // Registrar un autor
-    UserProfileDTO registerAuthor(UserRegistrationDTO registrationDTO);
+        // Register an author
+        UserProfileDTO registerAuthor(UserRegistrationDTO registrationDTO);
 
-    // Autenticar usuario (login)
-    AuthResponseDTO login(LoginDTO loginDTO);
+        // Authenticate user (login)
+        AuthResponseDTO login(LoginDTO loginDTO);
 
+        // Actualizar el perfil de usuario
+        UserProfileDTO updateUserProfile(Integer id, UserProfileDTO userProfileDTO);
 
-    // Actualizar el perfil de usuario
-    UserProfileDTO updateUserProfile(Integer id, UserProfileDTO userProfileDTO);
-
-    // Obtener el perfil de usuario por ID
-    UserProfileDTO getUserProfileById(Integer id);
+        // Get user profile by ID
+        UserProfileDTO getUserProfileById(Integer id);
 }

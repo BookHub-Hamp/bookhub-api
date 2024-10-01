@@ -1,13 +1,10 @@
 package com.hampcode.mapper;
 
-import com.hampcode.dto.PurchaseCreateDTO;
+import com.hampcode.dto.PurchaseCreateUpdateDTO;
 import com.hampcode.dto.PurchaseDTO;
-import com.hampcode.dto.PurchaseItemCreateDTO;
+import com.hampcode.dto.PurchaseItemCreateUpdateDTO;
 import com.hampcode.dto.PurchaseItemDTO;
-import com.hampcode.model.entity.Book;
-import com.hampcode.model.entity.Purchase;
-import com.hampcode.model.entity.PurchaseItem;
-import com.hampcode.model.entity.User;
+import com.hampcode.model.entity.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Component;
@@ -19,21 +16,17 @@ public class PurchaseMapper {
 
     public PurchaseMapper(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
-        //Configuración de la estrategia de mapeo
+
         this.modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    //Convertir PurchaseCreateDTO a Purchase (Crear una compra)
-    public Purchase toPurchaseCreateDTO(PurchaseCreateDTO purchaseDTO){
-        Purchase purchase= modelMapper.map(purchaseDTO, Purchase.class);
+    //Convertir PurchaseCreateUpdateDTO a Purchase (Crear una compra)
+    public Purchase toPurchaseEntity(PurchaseCreateUpdateDTO purchaseDTO) {
+        Purchase purchase = modelMapper.map(purchaseDTO, Purchase.class);
 
-        //Mapear manualmente el cliente
-        //User customer = new User();
         User user = new User();
-        //customer.setId(purchaseDTO.getCustomerId());
         user.setId(purchaseDTO.getCustomerId());
-        //purchase.setCustomer(customer);
-        purchase.setUser(user);  // Cambiado a 'user'
+        purchase.setUser(user);
 
         //Mapear manualmente los items de la compra
         purchase.setItems(purchaseDTO.getItems().stream()
@@ -44,22 +37,16 @@ public class PurchaseMapper {
     }
 
     //Convertir Purchase a PurchaseDTO (Mostrar una compra)
-    public PurchaseDTO toPurchaseDTO(Purchase purchase){
+    public PurchaseDTO toPurchaseDTO(Purchase purchase) {
         PurchaseDTO purchaseDTO = modelMapper.map(purchase, PurchaseDTO.class);
 
-        //Mapear manualmente el nombre del cliente
-        // Ya no se mapea el nombre del cliente, porque 'User' ya no tiene datos personales
-        // Antes: purchaseDTO.setCustomerName(purchase.getCustomer().getFirstName() + " " + purchase.getCustomer().getLastName());
-
-        //Mapear manualmente los items de la compra
         purchaseDTO.setItems(purchase.getItems().stream()
                 .map(this::toPurchaseItemDTO)
                 .toList());
         return purchaseDTO;
     }
 
-    //Convertir PurchaseItemCreateDTO a PurchaseItem
-    private PurchaseItem toPurchaseItemEntity(PurchaseItemCreateDTO itemDTO) {
+    private PurchaseItem toPurchaseItemEntity(PurchaseItemCreateUpdateDTO itemDTO) {
         PurchaseItem item = modelMapper.map(itemDTO, PurchaseItem.class);
         Book book = new Book();
         book.setId(itemDTO.getBookId());
@@ -67,9 +54,8 @@ public class PurchaseMapper {
         return item;
     }
 
-    //Convertir PurchaseItem a PurchaseItemDTO
-    private PurchaseItemDTO toPurchaseItemDTO(PurchaseItem item){
-        PurchaseItemDTO itemDTO= modelMapper.map(item, PurchaseItemDTO.class);
+    private PurchaseItemDTO toPurchaseItemDTO(PurchaseItem item) {
+        PurchaseItemDTO itemDTO = modelMapper.map(item, PurchaseItemDTO.class);
         itemDTO.setBookTitle(item.getBook().getTitle());
         return itemDTO;
     }

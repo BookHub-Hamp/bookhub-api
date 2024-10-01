@@ -2,7 +2,6 @@ package com.hampcode.api;
 
 import com.hampcode.dto.BookCreateUpdateDTO;
 import com.hampcode.dto.BookDetailsDTO;
-import com.hampcode.model.entity.Book;
 import com.hampcode.service.AdminBookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -49,8 +49,7 @@ public class AdminBookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDetailsDTO> update(@PathVariable Integer id,
-                                                 @Valid @RequestBody BookCreateUpdateDTO bookFormDTO) {
+    public ResponseEntity<BookDetailsDTO> update(@PathVariable Integer id, @Valid @RequestBody BookCreateUpdateDTO bookFormDTO) {
         BookDetailsDTO updatedBook = adminBookService.update(id, bookFormDTO);
         return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }

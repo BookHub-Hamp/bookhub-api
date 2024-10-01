@@ -1,13 +1,13 @@
 package com.hampcode.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
+
 public class BookDetailsDTO {
+
     private Integer id;
     private String title;
     private String slug;
@@ -15,6 +15,10 @@ public class BookDetailsDTO {
     private Float price;
     private String coverPath;
     private String filePath;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+
     private String categoryName;
     private String authorName;
 }

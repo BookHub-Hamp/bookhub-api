@@ -1,7 +1,6 @@
 package com.hampcode.security;
 
 import com.hampcode.exception.RoleNotFoundException;
-import com.hampcode.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -13,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -24,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class TokenProvider {
-    private final UserRepository userRepository;
 
     @Value("${jwt.secret}")
     private String jwtSecret;
@@ -37,24 +34,22 @@ public class TokenProvider {
 
     @PostConstruct
     public void init() {
+        // Generar la clave para firmar el JWT a partir del secreto configurado
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+
+        // Inicializar el parser JWT con la clave generada para firmar y validar tokens
         jwtParser = Jwts
                 .parserBuilder()
                 .setSigningKey(key)
                 .build();
     }
 
-    // Generar tokens JWT
+    // TODO: Método para crear el token JWT con los detalles del usuario autenticado
     public String createAccessToken(Authentication authentication) {
-        // Obtener el email del usuario autenticado desde el principal
+        // TODO: Obtener el email o nombre del usuario autenticado
         String email = authentication.getName();
 
-        // Buscar el usuario en la base de datos usando el email
-        com.hampcode.model.entity.User user = userRepository
-                .findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el email: " + email));
-
-        // Obtener el rol del usuario
+        // TODO: Obtener el rol del usuario desde el objeto de autenticación
         String role = authentication
                 .getAuthorities()
                 .stream()
@@ -62,36 +57,42 @@ public class TokenProvider {
                 .orElseThrow(RoleNotFoundException::new)
                 .getAuthority();
 
-        // Crear el token JWT con solo el rol y el sujeto
+        // TODO: Construir y firmar el token JWT que incluye el rol y el email
         return Jwts
                 .builder()
-                .setSubject(authentication.getName())  // El sujeto será el email o el nombre de usuario
-                .claim("role", role)  // Solo se incluye el rol como claim
-                .signWith(key, SignatureAlgorithm.HS512)
-                .setExpiration(new Date(System.currentTimeMillis() + jwtValidityInSeconds * 1000))
+                .setSubject(email)  // El sujeto del token es el email o nombre de usuario
+                .claim("role", role)  // El rol se incluye como claim en el token
+                .signWith(key, SignatureAlgorithm.HS512)  // Firmar el token con el algoritmo HS512 y la clave
+                .setExpiration(new Date(System.currentTimeMillis() + jwtValidityInSeconds * 1000))  // Configurar la fecha de expiración del token
                 .compact();
     }
 
-    // Obtener autenticación
+    // TODO: Método para obtener la autenticación a partir del token JWT
     public Authentication getAuthentication(String token) {
+        // TODO: Extraer los claims (datos) del token JWT
         Claims claims = jwtParser.parseClaimsJws(token).getBody();
 
+        // TODO: Obtener el rol del token
         String role = claims.get("role").toString();
 
+        // TODO: Crear la lista de autoridades (roles) para el usuario
         List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
 
-        // El principal será el email del usuario que viene en el subject del JWT
+        // TODO: El principal del contexto de seguridad será el email (subject) extraído del token
         User principal = new User(claims.getSubject(), "", authorities);
+
+        // TODO: Crear el objeto de autenticación con los detalles del usuario
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    // Validar tokens JWT
+    // TODO: Método para validar el token JWT (si está correctamente firmado y no ha expirado)
     public boolean validateToken(String token) {
         try {
+            // TODO: Parsear el token JWT para verificar su validez
             jwtParser.parseClaimsJws(token);
-            return true;
+            return true;  // El token es válido
         } catch (JwtException e) {
-            return false;
+            return false;  // El token no es válido
         }
     }
 }

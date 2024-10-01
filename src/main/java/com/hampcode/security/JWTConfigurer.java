@@ -14,10 +14,11 @@ public class JWTConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilt
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        // Crear una instancia del filtro JWTFilter
+        // TODO: Crear una instancia del filtro JWTFilter, pasándole el TokenProvider que manejará la lógica del JWT
         JWTFilter jwtFilter = new JWTFilter(tokenProvider);
 
-        // Agregar el filtro JWTFilter antes del filtro de autenticación de nombre de usuario y contraseña
+        // TODO: Agregar el filtro JWTFilter a la cadena de seguridad de Spring Security,
+        // asegurando que se ejecute antes del filtro de autenticación de usuario y contraseña (UsernamePasswordAuthenticationFilter)
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }
