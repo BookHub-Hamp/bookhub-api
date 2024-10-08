@@ -10,7 +10,8 @@
     </parent>
     <groupId>com.hampcode</groupId>
     <artifactId>bookhub-api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <!--<version>0.0.1-SNAPSHOT</version>-->
+    <version>0.0.1</version>
     <name>bookhub-api</name>
     <description>bookhub-api</description>
     <url/>
