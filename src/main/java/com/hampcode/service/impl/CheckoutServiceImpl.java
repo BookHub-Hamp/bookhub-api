@@ -1,27 +1,26 @@
 package com.hampcode.service.impl;
 
-
+import com.hampcode.dto.PaymentCaptureResponse;
+import com.hampcode.dto.PaymentOrderResponse;
 import com.hampcode.dto.PurchaseDTO;
-import com.hampcode.paypal.dto.OrderCaptureResponse;
-import com.hampcode.paypal.dto.OrderResponse;
-import com.hampcode.paypal.dto.PaypalCaptureResponse;
-import com.hampcode.paypal.dto.PaypalOrderResponse;
-import com.hampcode.paypal.service.PayPalService;
+import com.hampcode.integration.payment.paypal.dto.OrderCaptureResponse;
+import com.hampcode.integration.payment.paypal.dto.OrderResponse;
+import com.hampcode.integration.payment.paypal.service.PayPalService;
 import com.hampcode.service.CheckoutService;
 import com.hampcode.service.PurchaseService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class CheckoutServiceImpl implements CheckoutService {
 
-    private final PayPalService paypalService;
+    private final PayPalService payPalService;
     private final PurchaseService purchaseService;
 
     @Override
-    public PaypalOrderResponse createPaypalPaymentUrl(Integer purchaseId, String returnUrl, String cancelUrl) {
-        OrderResponse orderResponse = paypalService.createOrder(purchaseId, returnUrl, cancelUrl);
+    public PaymentOrderResponse createPayment(Integer purchaseId, String returnUrl, String cancelUrl) {
+        OrderResponse orderResponse =payPalService.createOrder(purchaseId, returnUrl, cancelUrl);
 
         String paypalUrl = orderResponse
                 .getLinks()
@@ -31,23 +30,23 @@ public class CheckoutServiceImpl implements CheckoutService {
                 .orElseThrow(RuntimeException::new)
                 .getHref();
 
-        return new PaypalOrderResponse(paypalUrl);
+        return new PaymentOrderResponse(paypalUrl);
     }
 
     @Override
-    public PaypalCaptureResponse capturePaypalPayment(String orderId) {
-        OrderCaptureResponse orderCaptureResponse = paypalService.captureOrder(orderId);
+    public PaymentCaptureResponse capturePayment(String orderId) {
+        OrderCaptureResponse orderCaptureResponse = payPalService.captureOrder(orderId);
         boolean completed = orderCaptureResponse.getStatus().equals("COMPLETED");
 
-        PaypalCaptureResponse paypalCaptureResponse = new PaypalCaptureResponse();
+        PaymentCaptureResponse paypalCaptureResponse = new PaymentCaptureResponse();
         paypalCaptureResponse.setCompleted(completed);
 
         if (completed) {
             String purchaseIdStr = orderCaptureResponse.getPurchaseUnits().get(0).getReferenceId();
             PurchaseDTO purchaseDTO = purchaseService.confirmPurchase(Integer.parseInt(purchaseIdStr));
             paypalCaptureResponse.setPurchaseId(purchaseDTO.getId());
-        }
 
+        }
         return paypalCaptureResponse;
     }
 }

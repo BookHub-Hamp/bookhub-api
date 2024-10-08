@@ -1,9 +1,9 @@
 package com.hampcode.api;
 
-import com.hampcode.paypal.dto.PaypalCaptureResponse;
-import com.hampcode.paypal.dto.PaypalOrderResponse;
+import com.hampcode.dto.PaymentCaptureResponse;
+import com.hampcode.dto.PaymentOrderResponse;
 import com.hampcode.service.CheckoutService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/checkout")
 @PreAuthorize("hasRole('CUSTOMER')")
@@ -20,19 +20,23 @@ public class CheckoutController {
 
     private final CheckoutService checkoutService;
 
-    @PostMapping("/paypal/create")
-    public ResponseEntity<PaypalOrderResponse> createPaypalOrder(
-            @RequestParam Integer purchaseId,
-            @RequestParam String returnUrl,
-            @RequestParam String cancelUrl
+    @PostMapping("/create")
+    public ResponseEntity<PaymentOrderResponse> createPaymentOrder(
+           @RequestParam Integer purchaseId,
+           @RequestParam String returnUrl,
+           @RequestParam String cancelUrl,
+           @RequestParam(required = false, defaultValue = "paypal") String paymentProvider
     ) {
-        PaypalOrderResponse response = checkoutService.createPaypalPaymentUrl(purchaseId, returnUrl, cancelUrl);
+        PaymentOrderResponse response = checkoutService.createPayment(purchaseId, returnUrl, cancelUrl);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @PostMapping("/paypal/capture")
-    public ResponseEntity<PaypalCaptureResponse> capturePaypalOrder(@RequestParam String orderId) {
-        PaypalCaptureResponse response = checkoutService.capturePaypalPayment(orderId);
+    @PostMapping("/capture")
+    public ResponseEntity<PaymentCaptureResponse> capturePaymentOrder(
+            @RequestParam String orderId,
+            @RequestParam(required = false, defaultValue = "paypal") String paymentProvider
+    ) {
+        PaymentCaptureResponse response = checkoutService.capturePayment(orderId);
 
         if (response.isCompleted()) {
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -40,5 +44,4 @@ public class CheckoutController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
-
 }

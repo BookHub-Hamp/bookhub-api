@@ -1,11 +1,11 @@
 package com.hampcode.service;
 
-import com.hampcode.paypal.dto.PaypalCaptureResponse;
-import com.hampcode.paypal.dto.PaypalOrderResponse;
+import com.hampcode.dto.PaymentCaptureResponse;
+import com.hampcode.dto.PaymentOrderResponse;
 
 public interface CheckoutService {
 
-    PaypalOrderResponse createPaypalPaymentUrl(Integer purchaseId, String returnUrl, String cancelUrl);
+    PaymentOrderResponse createPayment(Integer purchaseId, String returnUrl, String cancelUrl);
 
-    PaypalCaptureResponse capturePaypalPayment(String orderId);
+    PaymentCaptureResponse capturePayment(String orderId) ;
 }
