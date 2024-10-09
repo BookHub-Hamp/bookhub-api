@@ -2,8 +2,8 @@ spring:
   mail:
     default-encoding: UTF-8
     host: smtp.gmail.com
-    username: devacademyweb@gmail.com
-    password: khww rbne vmxb xtbz
+    username: TU-CORREO
+    password: TU-CONTRASEÑA-APP
     port: 587
     properties:
       mail:
